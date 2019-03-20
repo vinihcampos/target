@@ -16,7 +16,8 @@ using namespace target;
 
 int main(int argn, char const *argv[]){
 	
-	Canvas canvas(800,600);
+	Canvas canvas(300,300, target::RED, target::Color(255,0,255), target::BLUE, target::Color(255,0,255));
+	PPM::generator(canvas, "scene");
 
 	return 0;	
 }

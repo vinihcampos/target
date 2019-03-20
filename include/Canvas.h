@@ -24,13 +24,32 @@ namespace target{
 			size_t width, height;
 			std::unique_ptr<component_t[]> canvas;
 
+			Point2d Q11,Q12,Q21,Q22;
+
+			Color tl, tr;
+			Color bl, br;
+
 		public:
 			/**
 			*	Creates an empty canvas.
 			*	@param width_ The width of canvas.
 			*	@param height_ The height of canvas.
 			*/
-			Canvas(size_t width_, size_t height_);
+			Canvas(size_t width_, size_t height_, const Color & tl_, const Color & bl_, const Color & br_, const Color & tr_);
+
+			/**
+			*	Creates an empty canvas.
+			*	@param width_ The width of canvas.
+			*	@param height_ The height of canvas.
+			*/
+			Canvas(size_t width_, size_t height_, const Color & tl_, const Color & br_);
+
+			/**
+			*	Creates an empty canvas.
+			*	@param width_ The width of canvas.
+			*	@param height_ The height of canvas.
+			*/
+			Canvas(size_t width_, size_t height_, const Color & color);
 			
 			/**
 			*	Method to get the width of canvas. 
@@ -80,6 +99,8 @@ namespace target{
 			*	@param color The color to paint the list of pixels.
 			*/
 			void pixels(const Point2d ps[], const size_t & p_size, const Color & color);
+
+			Color interpolate(const Point2d p);
 	};
 
 }

@@ -6,7 +6,7 @@
 #include <fstream>
 #include <sstream>
 
-#include "Canvas.h"
+#include "Buffer.h"
 #include "Color.h"
 #include "Point2d.h"
 #include "PPM.h"
@@ -16,8 +16,8 @@ using namespace target;
 
 int main(int argn, char const *argv[]){
 	
-	Canvas canvas(300,300, target::RED, target::Color(255,0,255), target::BLUE, target::Color(255,0,255));
-	PPM::generator(canvas, "scene");
+	Buffer buffer(300,300, target::RED, target::BLUE);
+	PPM::generator(buffer, "scene");
 
 	return 0;	
 }

@@ -1,7 +1,7 @@
 #ifndef _PPM_
 #define _PPM_
 
-#include "Canvas.h"
+#include "Buffer.h"
 #include <string>
 
 namespace target{
@@ -17,11 +17,11 @@ namespace target{
 
 			/**
 			*	Static method to generate PPM image.
-			*	@param canvas Canvas to be converted to PPM image.
+			*	@param buffer Buffer to be converted to PPM image.
 			*	@param fileName Filename of generated PPM image.
 			*	@return std::string The generated PPM image.
 			*/
-			static std::string generator(const Canvas & canvas, const std::string & fileName = "");
+			static std::string generator(Buffer & buffer, const std::string & fileName = "");
 	};
 }
 

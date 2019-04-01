@@ -46,14 +46,17 @@ namespace target{
 			*	@param lhs left point.
 			*	@param rhs right point.
 			*/
-			friend bool operator==(const Point3d& lhs, const Point3d& rhs){ return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z; }
+			inline bool operator==(const Point3d& p){ return x == p.x && y == p.y && z == p.z; }
 			
 			/**
 			*	Compare the difference of two points.
 			*	@param lhs left point.
 			*	@param rhs right point.
 			*/
-			friend bool operator!=(const Point3d& lhs, const Point3d& rhs){ return !(lhs==rhs); }
+			inline bool operator!=(const Point3d& p){ return !(*this==p); }
+
+			inline float operator[](int idx) const { return idx == 0 ? x : idx == 1 ? y : z; }
+			inline float& operator[](int idx) { return idx == 0 ? x : idx == 1 ? y : z; }
 	};
 }
 #endif

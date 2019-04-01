@@ -3,8 +3,8 @@
 
 #include <memory>
 #include <string>
-#include "Color.h"
-#include "Point2d.h"
+#include "Vec3.h"
+#include "Point3d.h"
 
 namespace target{
 	
@@ -21,10 +21,10 @@ namespace target{
 	*/
 	class Buffer{
 		private:			
-			size_t width, height;
+			size_t width, height, depth;
 			std::unique_ptr<component_t[]> buffer;
 
-			Point2d Q11,Q12,Q21,Q22;
+			Point3d Q11,Q12,Q21,Q22;
 
 			Color tl, tr;
 			Color bl, br;
@@ -35,21 +35,21 @@ namespace target{
 			*	@param width_ The width of buffer.
 			*	@param height_ The height of buffer.
 			*/
-			Buffer(size_t width_, size_t height_, const Color & tl_, const Color & bl_, const Color & br_, const Color & tr_);
+			Buffer(size_t width_, size_t height_, size_t depth_, const Color & tl_, const Color & bl_, const Color & br_, const Color & tr_);
 
 			/**
 			*	Creates an empty buffer.
 			*	@param width_ The width of buffer.
 			*	@param height_ The height of buffer.
 			*/
-			Buffer(size_t width_, size_t height_, const Color & tl_, const Color & br_);
+			Buffer(size_t width_, size_t height_, size_t depth_, const Color & tl_, const Color & br_);
 
 			/**
 			*	Creates an empty buffer.
 			*	@param width_ The width of buffer.
 			*	@param height_ The height of buffer.
 			*/
-			Buffer(size_t width_, size_t height_, const Color & color);
+			Buffer(size_t width_, size_t height_, size_t depth_, const Color & color);
 			
 			/**
 			*	Method to get the width of buffer. 
@@ -62,6 +62,12 @@ namespace target{
 			*	@return The height of buffer.
 			*/
 			size_t getHeight() const { return height; }
+
+			/**
+			*	Method to get the depth of buffer.
+			*	@return The depth of buffer.
+			*/
+			size_t getDepth() const { return depth; }
 
 			/**
 			*	Method to get the color of top left point.
@@ -92,7 +98,7 @@ namespace target{
 			*	@param p A point of buffer.
 			*	@return The color of point p.
 			*/
-			Color get(const Point2d & p) const;
+			Color get(const Point3d & p) const;
 
 			/**
 			*	Method to get the color of a pixel.
@@ -107,14 +113,14 @@ namespace target{
 			*	@param p The start point of painting.
 			*	@param borderColor The limit color of algorithm.
 			*/
-			void fill(const Color & color, const Point2d p = Point2d(0,0), const Color & borderColor = BLACK);
+			void fill(const Color & color, const Point3d p = Point3d(0,0,0), const Color & borderColor = BLACK);
 			
 			/**
 			* 	Method to paint a pixel.
 			*	@param p A point of buffer.
 			*	@param color The color to paint the pixel.
 			*/
-			void pixel(const Point2d & p, const Color & color);
+			void pixel(const Point3d & p, const Color & color);
 			
 			/**
 			* 	Method to paint a list of pixels.
@@ -122,7 +128,7 @@ namespace target{
 			*	@param p_size The size of list ps.
 			*	@param color The color to paint the list of pixels.
 			*/
-			void pixels(const Point2d ps[], const size_t & p_size, const Color & color);
+			void pixels(const Point3d ps[], const size_t & p_size, const Color & color);
 	};
 
 }

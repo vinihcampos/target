@@ -7,7 +7,7 @@ std::string target::PPM::generator(target::Buffer & buffer, const std::string & 
 	
 	for(size_t row = 0; row < buffer.getHeight(); ++row){
 		for(size_t col = 0; col < buffer.getWidth(); ++col){
-			buffer.pixel( Point2d(row, col), Background::interpolate( buffer, Point2d(row, col) ) );
+			buffer.pixel( Point3d(row, col, 0), Background::interpolate( buffer, Point3d(row, col, 0) ) );
 		}
 	}
 
@@ -17,8 +17,8 @@ std::string target::PPM::generator(target::Buffer & buffer, const std::string & 
 
 	for(size_t i = 0; i < buffer.getHeight(); ++i){
 		for(size_t j = 0; j < buffer.getWidth(); ++j){
-			Color c = buffer.get(Point2d(j,i));
-			result += std::to_string(c.r) + " " + std::to_string(c.g) + " " + std::to_string(c.b) + " ";
+			Color c = buffer.get(Point3d(j,i,0));
+			result += std::to_string(int(c.r())) + " " + std::to_string(int(c.g())) + " " + std::to_string(int(c.b())) + " ";
 		}
 		result += "\n";
 	}

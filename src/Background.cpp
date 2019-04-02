@@ -4,8 +4,8 @@ target::Color target::Background::interpolate(const Buffer & buffer, const Point
 
 	int x1 = 0;
 	int x2 = buffer.getWidth() - 1;
-	int y1 = 0;
-	int y2 = buffer.getHeight() - 1;
+	int y1 = buffer.getHeight() - 1;
+	int y2 = 0;
 
 	float ratio = 1.0 / ( (x2-x1) * (y2-y1) * 1.0);
 

@@ -50,6 +50,18 @@ namespace target{
 			*	@param height_ The height of buffer.
 			*/
 			Buffer(size_t width_, size_t height_, size_t depth_, const Color & color);
+
+			/**
+			*	Creates an empty buffer.
+			*	@param width_ The width of buffer.
+			*	@param height_ The height of buffer.
+			*/
+			Buffer(size_t width_, size_t height_, size_t depth_);
+
+			/**
+			*	Creates an empty buffer.
+			*/
+			Buffer(){}
 			
 			/**
 			*	Method to get the width of buffer. 
@@ -74,24 +86,32 @@ namespace target{
 			*	@return The color of top left point.
 			*/
 			Color getTl() const { return tl; }
+			
+			void setTl(const Color & tl_) { tl = tl_; }
 
 			/**
 			*	Method to get the color of top bottom point.
 			*	@return The color of bottom left point.
 			*/
 			Color getBl() const { return bl; }
+			
+			void setBl(const Color & bl_) { bl = bl_; }
 
 			/**
 			*	Method to get the color of top right point.
 			*	@return The color of top right point.
 			*/
 			Color getTr() const { return tr; }
+			
+			void setTr(const Color & tr_) { tr = tr_; }
 
 			/**
 			*	Method to get the color of bottom right point.
 			*	@return The color of bottom right point.
 			*/
 			Color getBr() const { return br; }
+			
+			void setBr(const Color & br_) { br = br_; }
 
 			/**
 			*	Method to get the color of a pixel.

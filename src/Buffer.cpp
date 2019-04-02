@@ -22,6 +22,12 @@ target::Buffer::Buffer(size_t width_, size_t height_, size_t depth_, const Color
 	std::memset(buffer.get(), 0, width * height * depth * 3 * sizeof(component_t));
 }
 
+target::Buffer::Buffer(size_t width_, size_t height_, size_t depth_) 
+	: width{width_}, height{height_}, depth{depth_}, tl{WHITE}, bl{WHITE}, br{WHITE}, tr{WHITE} {
+	buffer = std::make_unique<component_t[]>(width * height * depth * 3);
+	std::memset(buffer.get(), 0, width * height * depth * 3 * sizeof(component_t));
+}
+
 void target::Buffer::fill(const Color & color, const Point3d p, const Color & borderColor){
 	if(p.x >= 0 && p.x < width && p.y >= 0 && p.y < height && !(get(p) == borderColor) && !(get(p) == color)){
 		pixel(p, color);

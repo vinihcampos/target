@@ -2,6 +2,7 @@
 #define _POINT3D_
 
 #include <string>
+#include "Vec3.h"
 
 namespace target{
 

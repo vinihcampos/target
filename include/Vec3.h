@@ -31,13 +31,11 @@ namespace target{
 			
 			inline Vec3 operator+(const Vec3 & p){ return Vec3( point.x+p.x(), point.y+p.y(), point.z+p.z() ); }
 			inline void operator+=(const Vec3 & p){ point.x += p.x(); point.y += p.y(); point.z += p.z(); }
-			inline Vec3 operator+(const Point3d p){ return Vec3( point.x+p.x, point.y+p.y, point.z+p.z ); }
-			inline void operator+=(const Point3d p){ point.x += p.x; point.y += p.y; point.z += p.z; }
+			inline Point3d operator+(const Point3d p){ return Point3d( point.x+p.x, point.y+p.y, point.z+p.z ); }
 
 			inline Vec3 operator-(const Vec3 & p){ return Vec3( point.x-p.x(), point.y-p.y(), point.z-p.z() ); }
 			inline void operator-=(const Vec3 & p){ point.x -= p.x(); point.y -= p.y(); point.z -= p.z(); }
-			inline Vec3 operator-(const Point3d p){ return Vec3( point.x-p.x, point.y-p.y, point.z-p.z ); }
-			inline void operator-=(const Point3d p){ point.x -= p.x; point.y -= p.y; point.z -= p.z; }
+			inline Point3d operator-(const Point3d p){ return Point3d( point.x-p.x, point.y-p.y, point.z-p.z ); }
 
 			inline Vec3 operator*(const Vec3 & p){ return Vec3( point.x*p.x(), point.y*p.y(), point.z*p.z() ); }
 			inline void operator*=(const Vec3 & p){ point.x *= p.x(); point.y *= p.y(); point.z *= p.z(); }

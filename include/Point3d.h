@@ -2,6 +2,7 @@
 #define _POINT3D_
 
 #include <string>
+#include <iostream>
 
 namespace target{
 
@@ -57,6 +58,11 @@ namespace target{
 
 			inline float operator[](int idx) const { return idx == 0 ? x : idx == 1 ? y : z; }
 			inline float& operator[](int idx) { return idx == 0 ? x : idx == 1 ? y : z; }
+
+			friend inline std::ostream& operator<<(std::ostream &os, const Point3d &v){
+				os << v.x << " " << v.y << " " << v.z;
+				return os;
+ 			}
 	};
 }
 #endif

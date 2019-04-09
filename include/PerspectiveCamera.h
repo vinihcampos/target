@@ -7,7 +7,7 @@
 namespace target{
 	class PerspectiveCamera : Camera{
 		public:
-			virtual Ray generate_ray(int x, int y);	
+			Ray generate_ray(int x, int y);	
 	};
 }
 

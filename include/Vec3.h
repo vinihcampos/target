@@ -1,9 +1,9 @@
 #ifndef _VEC3_
 #define _VEC3_
 
-#include "Point3d.h"
 #include <iostream>
 #include <math.h>
+#include "Point3d.h"
 
 namespace target{
 
@@ -56,6 +56,11 @@ namespace target{
 				return Vec3( point.y*p.z() - point.z*p.y(),
 							 point.z*p.x() - point.x*p.z(),
 							 point.x*p.y() - point.y*p.x());
+			}
+
+			inline Vec3 norm(){
+				float root = length();
+				return (*this) / root;
 			}
 
 			inline float length() const{

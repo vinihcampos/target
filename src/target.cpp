@@ -2,11 +2,6 @@
 
 #include "Buffer.h"
 #include "Descriptor.h"
-#include "PPM.h"
-#include "Ray.h"
-#include "OrthoCamera.h"
-#include "PerspectiveCamera.h"
-#include "Vec3.h"
 
 using namespace std;
 using namespace target;

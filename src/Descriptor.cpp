@@ -3,6 +3,8 @@
 #include "Background.h"
 #include "OrthoCamera.h"
 #include "PerspectiveCamera.h"
+#include "Primitive.h"
+#include "Sphere.h"
 #include <map>
 #include <vector>
 
@@ -11,6 +13,7 @@ void target::Descriptor::run(const std::string & description){
 	Buffer buffer;
 	XMLDocument xmlTarget;
 	Camera * camera;
+	std::vector<Primitive*> primitives;
 	auto file = xmlTarget.LoadFile(description.c_str());
 	auto * pRootElement = xmlTarget.RootElement();
 
@@ -39,11 +42,23 @@ void target::Descriptor::run(const std::string & description){
 		}
 	}
 
+	primitives.push_back(new Sphere(Vec3(-1,.5,-5), .4, "sphere1")); 
+	primitives.push_back(new Sphere(Vec3(1,-.5,-8), .4, "sphere2")); 
+	primitives.push_back(new Sphere(Vec3(-1,-1.5,-3.5), .4, "sphere3")); 
+
 	for(size_t row = 0; row < buffer.getHeight(); ++row){
 		for(size_t col = 0; col < buffer.getWidth(); ++col){
 			Ray ray = camera->generate_ray(row,col);
 			for(size_t depth = 0; depth < buffer.getDepth(); ++depth){
-				buffer.pixel( Point3d(col, row, depth), Background::interpolate( buffer, Point3d(col, row, depth) ) );
+				bool intercepted = false;
+				for(Primitive *p : primitives){
+					if(p->intersect_p(ray)){
+						intercepted = true;
+						buffer.pixel( Point3d(col, row, depth), RED );	
+					}
+				}
+				if(!intercepted)
+					buffer.pixel( Point3d(col, row, depth), Background::interpolate( buffer, Point3d(col, row, depth) ) );
 			}
 		}
 	}

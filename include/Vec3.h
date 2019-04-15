@@ -51,7 +51,7 @@ namespace target{
 				return point.x == p.x() && point.y == p.y() && point.z == p.z();
 			}
 
-			inline float dot(const Vec3 & p){ return point.x * p.x() + point.y * p.y() + point.z * p.y(); }
+			inline float dot(const Vec3 & p){ return point.x * p.x() + point.y * p.y() + point.z * p.z(); }
 			inline Vec3 cross(const Vec3 & p){
 				return Vec3( point.y*p.z() - point.z*p.y(),
 							 point.z*p.x() - point.x*p.z(),

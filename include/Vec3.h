@@ -11,23 +11,30 @@ namespace target{
 		private:
 			Point3d point;
 
+			bool comp(double a,double b) const {
+			    return std::fabs(a - b) <= 0.009;
+			}
+
 		public:
-			Vec3(float x = 0, float y = 0, float z = 0){
+			Vec3(double x = 0, double y = 0, double z = 0){
 				point = Point3d(x,y,z);
 			}
 			Vec3(const Point3d & point_){
 				point = Point3d(point_);
 			}
 
-			inline float x() const{ return point.x; }
-			inline float y() const{ return point.y; }
-			inline float z() const{ return point.z; }
-			inline float r() const{ return point.x; }
-			inline float g() const{ return point.y; }
-			inline float b() const{ return point.z; }
+			inline double x() const{ return point.x; }
+			inline double y() const{ return point.y; }
+			inline double z() const{ return point.z; }
+			inline double r() const{ return point.x; }
+			inline double g() const{ return point.y; }
+			inline double b() const{ return point.z; }
+			inline void setX(double x){ point.x = x; }
+			inline void setY(double y){ point.y = y; }
+			inline void setZ(double z){ point.z = z; }
 
-			inline float operator[](int idx) const { return point[idx]; }
-			inline float& operator[](int idx){ return point[idx]; }
+			inline double operator[](int idx) const { return point[idx]; }
+			inline double& operator[](int idx){ return point[idx]; }
 			
 			inline Vec3 operator+(const Vec3 & p){ return Vec3( point.x+p.x(), point.y+p.y(), point.z+p.z() ); }
 			inline void operator+=(const Vec3 & p){ point.x += p.x(); point.y += p.y(); point.z += p.z(); }
@@ -39,19 +46,19 @@ namespace target{
 
 			inline Vec3 operator*(const Vec3 & p){ return Vec3( point.x*p.x(), point.y*p.y(), point.z*p.z() ); }
 			inline void operator*=(const Vec3 & p){ point.x *= p.x(); point.y *= p.y(); point.z *= p.z(); }
-			inline Vec3 operator*(const float v){ return Vec3( point.x*v, point.y*v, point.z*v ); }
-			inline void operator*=(const float v){ point.x *= v; point.y *= v; point.z *= v; }
+			inline Vec3 operator*(const double v){ return Vec3( point.x*v, point.y*v, point.z*v ); }
+			inline void operator*=(const double v){ point.x *= v; point.y *= v; point.z *= v; }
 
 			inline Vec3 operator/(const Vec3 & p){ return Vec3( point.x/p.x(), point.y/p.y(), point.z/p.z() ); }
 			inline void operator/=(const Vec3 & p){ point.x /= p.x(); point.y /= p.y(); point.z /= p.z(); }
-			inline Vec3 operator/(const float v){ return Vec3( point.x/v, point.y/v, point.z/v ); }
-			inline void operator/=(const float v){ point.x /= v; point.y /= v; point.z /= v; }
+			inline Vec3 operator/(const double v){ return Vec3( point.x/v, point.y/v, point.z/v ); }
+			inline void operator/=(const double v){ point.x /= v; point.y /= v; point.z /= v; }
 
 			inline bool operator==(const Vec3 & p) const{
-				return point.x == p.x() && point.y == p.y() && point.z == p.z();
+				return comp(point.x,p.x()) && comp(point.y,p.y()) && comp(point.z,p.z());
 			}
 
-			inline float dot(const Vec3 & p){ return point.x * p.x() + point.y * p.y() + point.z * p.z(); }
+			inline double dot(const Vec3 & p){ return point.x * p.x() + point.y * p.y() + point.z * p.z(); }
 			inline Vec3 cross(const Vec3 & p){
 				return Vec3( point.y*p.z() - point.z*p.y(),
 							 point.z*p.x() - point.x*p.z(),
@@ -59,15 +66,15 @@ namespace target{
 			}
 
 			inline Vec3 norm(){
-				float root = length();
+				double root = length();
 				return (*this) / root;
 			}
 
-			inline float length() const{
+			inline double length() const{
 				return std::sqrt( point.x*point.x + point.y*point.y + point.z*point.z );
 			}
 
-			inline float square_length() const{
+			inline double square_length() const{
 				return point.x*point.x + point.y*point.y + point.z*point.z;
 			}
 

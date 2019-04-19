@@ -8,6 +8,7 @@
 #include <map>
 #include <vector>
 
+
 void target::Descriptor::run(const std::string & description){
 
 	Buffer buffer;
@@ -49,6 +50,9 @@ void target::Descriptor::run(const std::string & description){
 	for(size_t row = 0; row < buffer.getHeight(); ++row){
 		for(size_t col = 0; col < buffer.getWidth(); ++col){
 			Ray ray = camera->generate_ray(row,col);
+			/*if(out_perspcamera_samp_300.find(std::make_pair(row,col)) != out_perspcamera_samp_300.end())
+				//std::cout << (out_perspcamera_samp_300[std::make_pair(row,col)] == ray) << std::endl;
+				std::cout << "[" << row << "," << col << "], " << (out_perspcamera_samp_300[std::make_pair(row,col)] == ray) << ", " << ray << ", " << out_perspcamera_samp_300[std::make_pair(row,col)] << std::endl;*/
 			for(size_t depth = 0; depth < buffer.getDepth(); ++depth){
 				bool intercepted = false;
 				for(Primitive *p : primitives){
@@ -122,54 +126,54 @@ void target::Descriptor::processCamera(Buffer & buffer, Camera *& camera, XMLEle
 		for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
 			elementName = pChild->Name();
 			if(!elementName.compare("Position") || !elementName.compare("position")){
-				auto x = pChild->FloatAttribute("x", 0.0);
-				auto y = pChild->FloatAttribute("y", 0.0);
-				auto z = pChild->FloatAttribute("z", 0.0);
+				auto x = pChild->DoubleAttribute("x", 0.0);
+				auto y = pChild->DoubleAttribute("y", 0.0);
+				auto z = pChild->DoubleAttribute("z", 0.0);
 				position = Vec3(x,y,z);
 			}else if(!elementName.compare("Target") || !elementName.compare("target")){
-				auto x =  pChild->FloatAttribute("x", 0.0);
-				auto y =  pChild->FloatAttribute("y", 0.0);
-				auto z =  pChild->FloatAttribute("z", 0.0);
+				auto x =  pChild->DoubleAttribute("x", 0.0);
+				auto y =  pChild->DoubleAttribute("y", 0.0);
+				auto z =  pChild->DoubleAttribute("z", 0.0);
 				target = Vec3(x,y,z);
 			}else if(!elementName.compare("Up") || !elementName.compare("up")){
-				auto x = pChild->FloatAttribute("x", 0.0);
-				auto y = pChild->FloatAttribute("y", 0.0);
-				auto z = pChild->FloatAttribute("z", 0.0);
+				auto x = pChild->DoubleAttribute("x", 0.0);
+				auto y = pChild->DoubleAttribute("y", 0.0);
+				auto z = pChild->DoubleAttribute("z", 0.0);
 				up = Vec3(x,y,z);
 			}else if(!elementName.compare("Vpdim") || !elementName.compare("vpdim")){
-				l = pChild->FloatAttribute("l", 0.0);
-				r = pChild->FloatAttribute("r", 0.0);
-				b = pChild->FloatAttribute("b", 0.0);
-				t = pChild->FloatAttribute("t", 0.0);
+				l = pChild->DoubleAttribute("l", 0.0);
+				r = pChild->DoubleAttribute("r", 0.0);
+				b = pChild->DoubleAttribute("b", 0.0);
+				t = pChild->DoubleAttribute("t", 0.0);
 			}
 		}
 
 		camera = new OrthoCamera(position, target, up, width, height, l, r, b, t);
 	}else if(!type.compare("perspective")){
-		float fovy, fd, aspect;
+		double fovy, fd, aspect;
 		for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
 			elementName = pChild->Name();
 			if(!elementName.compare("Position") || !elementName.compare("position")){
-				auto x = pChild->FloatAttribute("x", 0.0);
-				auto y = pChild->FloatAttribute("y", 0.0);
-				auto z = pChild->FloatAttribute("z", 0.0);
+				auto x = pChild->DoubleAttribute("x", 0.0);
+				auto y = pChild->DoubleAttribute("y", 0.0);
+				auto z = pChild->DoubleAttribute("z", 0.0);
 				position = Vec3(x,y,z);
 			}else if(!elementName.compare("Target") || !elementName.compare("target")){
-				auto x =  pChild->FloatAttribute("x", 0.0);
-				auto y =  pChild->FloatAttribute("y", 0.0);
-				auto z =  pChild->FloatAttribute("z", 0.0);
+				auto x =  pChild->DoubleAttribute("x", 0.0);
+				auto y =  pChild->DoubleAttribute("y", 0.0);
+				auto z =  pChild->DoubleAttribute("z", 0.0);
 				target = Vec3(x,y,z);
 			}else if(!elementName.compare("Up") || !elementName.compare("up")){
-				auto x = pChild->FloatAttribute("x", 0.0);
-				auto y = pChild->FloatAttribute("y", 0.0);
-				auto z = pChild->FloatAttribute("z", 0.0);
+				auto x = pChild->DoubleAttribute("x", 0.0);
+				auto y = pChild->DoubleAttribute("y", 0.0);
+				auto z = pChild->DoubleAttribute("z", 0.0);
 				up = Vec3(x,y,z);
 			}else if(!elementName.compare("Fovy") || !elementName.compare("fovy")){
-				fovy = pChild->IntAttribute("value", 0);
+				fovy = pChild->DoubleAttribute("value", 0);
 			}else if(!elementName.compare("Aspect") || !elementName.compare("aspect")){
-				aspect = pChild->IntAttribute("value", 0);
+				aspect = pChild->DoubleAttribute("value", 0);
 			}else if(!elementName.compare("Fdistance") || !elementName.compare("fdistance")){
-				fd = pChild->IntAttribute("value", 0);
+				fd = pChild->DoubleAttribute("value", 0);
 			}
 		}
 

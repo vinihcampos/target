@@ -1,0 +1,35 @@
+<target>
+    <settings>
+        <output name="perspective"/>
+    </settings>
+    <background>
+        <color r="18" g="10" b="143"/> <!-- top left -->
+        <color r="153" g="204" b="255"/> <!-- bottom left -->
+        <color r="153" g="204" b="255"/> <!-- bottom right -->
+        <color r="18" g="10" b="143"/> <!-- top right -->
+    </background>
+    <camera type="perspective">
+        <position x="0" y="0" z="0"/>
+        <target x="0" y="0" z="-10"/>
+        <up x="0" y="1" z="1"/>
+        <fovy value="65.0" />
+        <aspect value="1.33"/>
+        <fdistance value="1" />
+        <width value="800"/>
+        <height value="600"/>
+    </camera>
+    <scene>
+        <object type="sphere" name="sphere1">
+            <radius value="0.4"/>
+            <center x="-1.0" y="0.5" z="-5"/>
+        </object>
+        <object type="sphere" name="sphere2">
+            <radius value="0.4"/>
+            <center x="1.0" y="-0.5" z="-8"/>
+        </object>
+        <object type="sphere" name="sphere3">
+            <radius value="0.4"/>
+            <center x="-1.0" y="-1.5" z="-3.5"/>
+        </object>
+    </scene>
+</target>

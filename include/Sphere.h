@@ -35,6 +35,8 @@ namespace target{
 
 			}
 			inline const Material * get_material(void) const { return this->material.get(); }
+			inline Vec3 getCenter(){ return center; }
+			inline float getRadius() { return radius; }
 	};
 
 }

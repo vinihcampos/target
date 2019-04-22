@@ -19,6 +19,7 @@ namespace target{
 			virtual bool intersect( const Ray& r, SurfaceInteraction *) const = 0;
 			virtual bool intersect_p( const Ray& r ) const = 0;
 			virtual const Material * get_material(void) const = 0;// { return material; }
+			inline std::string getName(){ return name; }
 		
 	};
 

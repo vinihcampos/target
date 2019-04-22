@@ -38,14 +38,16 @@ void target::Descriptor::run(const std::string & description){
 			target::Descriptor::processBackground(buffer, pChild);
 		}else if(!elementName.compare("Settings") || !elementName.compare("settings")){
 			settings = target::Descriptor::processSettings(buffer, pChild);
+		}else if(!elementName.compare("Scene") || !elementName.compare("scene")){
+			target::Descriptor::processScene(primitives, pChild);
 		}else{
 			std::cerr << "The element " << elementName << " is invalid" << std::endl;
 		}
 	}
 
-	primitives.push_back(new Sphere(Vec3(-1,.5,-5), .4, "sphere1")); 
-	primitives.push_back(new Sphere(Vec3(1,-.5,-8), .4, "sphere2")); 
-	primitives.push_back(new Sphere(Vec3(-1,-1.5,-3.5), .4, "sphere3")); 
+	//primitives.push_back(new Sphere(Vec3(-1,.5,-5), .4, "sphere1")); 
+	//primitives.push_back(new Sphere(Vec3(1,-.5,-8), .4, "sphere2")); 
+	//primitives.push_back(new Sphere(Vec3(-1,-1.5,-3.5), .4, "sphere3")); 
 
 	for(size_t row = 0; row < buffer.getHeight(); ++row){
 		for(size_t col = 0; col < buffer.getWidth(); ++col){
@@ -204,4 +206,51 @@ void target::Descriptor::processBackground(Buffer & buffer, XMLElement *& elemen
 	buffer.setTr(colors[3]);
 
 	colors.clear();
+}
+
+void target::Descriptor::processScene(std::vector<Primitive*> & primitives, XMLElement *& element){
+	std::string elementName;
+	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
+		elementName = pChild->Name();
+		if(!elementName.compare("Object") || !elementName.compare("object")){
+			processObject(primitives, pChild);
+		}else{
+			std::cerr << "The element " << elementName << " is invalid" << std::endl;
+		}
+	}
+}
+
+void target::Descriptor::processObject(std::vector<Primitive*> & primitives, XMLElement *& element){
+	std::string type = "";
+	if(element->Attribute("type") != NULL) 
+		type = element->Attribute("type");
+
+	if(!type.compare("Sphere") || !type.compare("sphere")){
+		primitives.push_back(processSphere(element));
+	}else{
+		std::cerr << "The object type is invalid" << std::endl;
+	}
+}
+
+target::Sphere * target::Descriptor::processSphere(XMLElement *& element){
+	std::string name = "";
+	if(element->Attribute("name") != NULL) 
+		name = element->Attribute("name");
+
+	std::string elementName;
+	double radius, x, y, z;
+	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
+		elementName = pChild->Name();
+		if(!elementName.compare("Radius") || !elementName.compare("radius")){
+			radius = pChild->DoubleAttribute("value", 0.0);
+		}else if(!elementName.compare("Center") || !elementName.compare("center")){
+			x = pChild->DoubleAttribute("x", 0.0);
+			y = pChild->DoubleAttribute("y", 0.0);
+			z = pChild->DoubleAttribute("z", 0.0);
+		}else{
+			std::cerr << "The element " << elementName << " is invalid" << std::endl;
+		}
+	}
+
+	return new Sphere(Vec3(x,y,z), radius, name);
 }

@@ -153,6 +153,7 @@ void target::Descriptor::processCamera(Buffer & buffer, Camera *& camera, XMLEle
 		camera = new OrthoCamera(position, target, up, width, height, l, r, b, t);
 	}else if(!type.compare("perspective")){
 		double fovy, fd, aspect;
+		aspect = width / (1.0 * height); 
 		for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
 			elementName = pChild->Name();
 			if(!elementName.compare("Position") || !elementName.compare("position")){

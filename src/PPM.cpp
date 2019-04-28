@@ -11,10 +11,8 @@ std::string target::PPM::generator(target::Buffer & buffer, const std::string & 
 
 	for(auto i = int(buffer.getHeight() - 1); i >= 0 ; --i){
 		for(auto j = 0; j < buffer.getWidth(); ++j){
-			for(auto k = 0; k < buffer.getDepth(); ++k){
-				Color c = buffer.get(Point3d(j,i,k));
-				result += std::to_string(int(c.r())) + " " + std::to_string(int(c.g())) + " " + std::to_string(int(c.b())) + " ";
-			}			
+			Color c = buffer.get(Point2(j,i));
+			result += std::to_string(int(c.r())) + " " + std::to_string(int(c.g())) + " " + std::to_string(int(c.b())) + " ";			
 		}
 		result += "\n";
 	}

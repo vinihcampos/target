@@ -9,7 +9,7 @@ namespace target{
 		
 		protected:
 			Vec3 w, u, v;
-			Point3d e;
+			Point3 e;
 			float l,r,b,t;
 			int nx, ny;
 
@@ -23,7 +23,7 @@ namespace target{
 				w = gaze.norm();
 				u = vup.cross(w).norm();
 				v = w.cross(u).norm();
-				e = Point3d( look_from.x(),look_from.y(),look_from.z() );
+				e = Point3( look_from.x(),look_from.y(),look_from.z() );
 
 				//std::cout << u << std::endl;
 				//std::cout << v << std::endl;

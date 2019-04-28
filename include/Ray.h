@@ -1,20 +1,20 @@
 #ifndef _RAY_
 #define _RAY_
 
-#include "Point3d.h"
+#include "Point3.h"
 #include "Vec3.h"
 
 namespace target{
 
 	class Ray{
 		private:
-			Point3d o;
+			Point3 o;
 			Vec3 d;
 		public:
 			Ray(){}
-			Ray(const Point3d o, const Vec3 d) : o{o}, d{d} {}
-			inline Point3d operator()(const float & t) { return d * t + o; }
-			inline Point3d getOrigin() const { return o; }
+			Ray(const Point3 o, const Vec3 d) : o{o}, d{d} {}
+			inline Point3 operator()(const float & t) { return d * t + o; }
+			inline Point3 getOrigin() const { return o; }
 			inline Vec3 getDirection() const { return d; }
 
 			inline bool operator==(const Ray & r) const{

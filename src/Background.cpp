@@ -1,6 +1,6 @@
 #include "Background.h"
 
-target::Color target::Background::interpolate(const Buffer & buffer, const Point3d p){
+target::Color target::Background::interpolate(const Buffer & buffer, const Point2 p){
 
 	int x1 = 0;
 	int x2 = buffer.getWidth() - 1;

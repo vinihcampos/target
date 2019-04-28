@@ -3,7 +3,7 @@
 
 #include "Buffer.h"
 #include "Vec3.h"
-#include "Point3d.h"
+#include "Point2.h"
 #include <string>
 
 namespace target{
@@ -17,7 +17,7 @@ namespace target{
 	class Background{
 		public:
 
-			static Color interpolate(const Buffer & buffer, const Point3d p);
+			static Color interpolate(const Buffer & buffer, const Point2 p);
 	};
 }
 

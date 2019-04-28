@@ -14,18 +14,18 @@ namespace target{
 			/**
 			*	A point of X-axis.
 			*/
-			int x;
+			double x;
 			/**
 			*	A point of Y-axis.
 			*/
-			int y;
+			double y;
 
 			/**
 			*	Creates a point. 
 			*	@param x_ A point of X-axis.
 			*	@param y_ A point of Y-axis.
 			*/
-			Point2(int x_ = 0, int y_ = 0) : x{x_}, y{y_}{}
+			Point2(double x_ = 0, double y_ = 0) : x{x_}, y{y_}{}
 
 			/**
 			*	Creates a copy of a point. 
@@ -46,6 +46,14 @@ namespace target{
 			*	@param rhs right point.
 			*/
 			friend bool operator!=(const Point2& lhs, const Point2& rhs){ return !(lhs==rhs); }
+
+			inline double operator[](int idx) const { return idx == 0 ? x : y; }
+			inline double& operator[](int idx) { return idx == 0 ? x : y; }
+
+			friend inline std::ostream& operator<<(std::ostream &os, const Point2 &v){
+				os << v.x << " " << v.y;
+				return os;
+ 			}
 	};
 }
 #endif

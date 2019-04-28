@@ -3,13 +3,13 @@
 
 #include <iostream>
 #include <math.h>
-#include "Point3d.h"
+#include "Point3.h"
 
 namespace target{
 
 	class Vec3{
 		private:
-			Point3d point;
+			Point3 point;
 
 			bool comp(double a,double b) const {
 			    return std::fabs(a - b) <= 0.009;
@@ -17,10 +17,10 @@ namespace target{
 
 		public:
 			Vec3(double x = 0, double y = 0, double z = 0){
-				point = Point3d(x,y,z);
+				point = Point3(x,y,z);
 			}
-			Vec3(const Point3d & point_){
-				point = Point3d(point_);
+			Vec3(const Point3 & point_){
+				point = Point3(point_);
 			}
 
 			inline double x() const{ return point.x; }
@@ -38,11 +38,11 @@ namespace target{
 			
 			inline Vec3 operator+(const Vec3 & p){ return Vec3( point.x+p.x(), point.y+p.y(), point.z+p.z() ); }
 			inline void operator+=(const Vec3 & p){ point.x += p.x(); point.y += p.y(); point.z += p.z(); }
-			inline Point3d operator+(const Point3d p){ return Point3d( point.x+p.x, point.y+p.y, point.z+p.z ); }
+			inline Point3 operator+(const Point3 p){ return Point3( point.x+p.x, point.y+p.y, point.z+p.z ); }
 
 			inline Vec3 operator-(const Vec3 & p){ return Vec3( point.x-p.x(), point.y-p.y(), point.z-p.z() ); }
 			inline void operator-=(const Vec3 & p){ point.x -= p.x(); point.y -= p.y(); point.z -= p.z(); }
-			inline Point3d operator-(const Point3d p){ return Point3d( point.x-p.x, point.y-p.y, point.z-p.z ); }
+			inline Point3 operator-(const Point3 p){ return Point3( point.x-p.x, point.y-p.y, point.z-p.z ); }
 
 			inline Vec3 operator*(const Vec3 & p){ return Vec3( point.x*p.x(), point.y*p.y(), point.z*p.z() ); }
 			inline void operator*=(const Vec3 & p){ point.x *= p.x(); point.y *= p.y(); point.z *= p.z(); }

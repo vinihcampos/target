@@ -55,17 +55,15 @@ void target::Descriptor::run(const std::string & description){
 			/*if(out_perspcamera_samp_300.find(std::make_pair(row,col)) != out_perspcamera_samp_300.end())
 				//std::cout << (out_perspcamera_samp_300[std::make_pair(row,col)] == ray) << std::endl;
 				std::cout << "[" << row << "," << col << "], " << (out_perspcamera_samp_300[std::make_pair(row,col)] == ray) << ", " << ray << ", " << out_perspcamera_samp_300[std::make_pair(row,col)] << std::endl;*/
-			for(size_t depth = 0; depth < buffer.getDepth(); ++depth){
-				bool intercepted = false;
-				for(Primitive *p : primitives){
-					if(p->intersect_p(ray)){
-						intercepted = true;
-						buffer.pixel( Point3d(col, row, depth), RED );	
-					}
+			bool intercepted = false;
+			for(Primitive *p : primitives){
+				if(p->intersect_p(ray)){
+					intercepted = true;
+					buffer.pixel( Point2(col, row), RED );	
 				}
-				if(!intercepted)
-					buffer.pixel( Point3d(col, row, depth), Background::interpolate( buffer, Point3d(col, row, depth) ) );
 			}
+			if(!intercepted)
+				buffer.pixel( Point2(col, row), Background::interpolate( buffer, Point2(col, row) ) );
 		}
 	}
 

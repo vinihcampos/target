@@ -5,6 +5,7 @@
 #include "PerspectiveCamera.h"
 #include "Primitive.h"
 #include "Sphere.h"
+#include "Scene.h"
 #include <map>
 #include <vector>
 

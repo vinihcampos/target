@@ -7,14 +7,14 @@
 
 namespace target{
 
-	class Sphere : public Primitive{
+	class Sphere : public Shape{
 		private:
 			Vec3 center;
 			float radius;
 
 		public:
 			Sphere(const Vec3 & center, const float & radius, const std::string & name ) 
-				: Primitive(name), center{center}, radius{radius}{}
+				: Shape(name), center{center}, radius{radius}{}
 			inline bool intersect( const Ray& r, SurfaceInteraction *) const { return true; }
 			inline bool intersect_p( const Ray& r ) const{
 				

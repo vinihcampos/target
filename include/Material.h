@@ -4,9 +4,11 @@
 namespace target{
 
 	class Material{
+		protected:
+			Color color;
 		public:
-			Material();
-			~Material();
+			Material(const Color & color) : color{color}{}
+			virtual ~Material() = default;
 	};
 
 }

@@ -21,7 +21,7 @@ namespace target{
 			*	@param fileName Filename of generated PPM image.
 			*	@return std::string The generated PPM image.
 			*/
-			static std::string generator(Buffer & buffer, const std::string & fileName = "");
+			static std::string generator(std::shared_ptr<Buffer> & buffer, const std::string & fileName = "");
 	};
 }
 

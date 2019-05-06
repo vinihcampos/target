@@ -9,18 +9,19 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <memory>
 
 using namespace tinyxml2;
 
 namespace target{
 	class Descriptor{
 		private:
-			static std::map<std::string, std::string> processSettings(Buffer & buffer, XMLElement *& element);
-			static void processBackground(Buffer & buffer, XMLElement *& element);
-			static void processCamera(Buffer & buffer, Camera *& camera, XMLElement *& element);
-			static void processScene(std::vector<Primitive*> & primitives, XMLElement *& element);
-			static void processObject(std::vector<Primitive*> & primitives, XMLElement *& element);
-			static target::Sphere * processSphere(XMLElement *& element);
+			static std::map<std::string, std::string> processSettings(std::shared_ptr<Buffer> & buffer, XMLElement *& element);
+			static void processBackground(std::shared_ptr<Buffer> & buffer, XMLElement *& element);
+			static void processCamera(std::shared_ptr<Buffer> & buffer, std::shared_ptr<Camera> & camera, XMLElement *& element);
+			static void processScene(std::vector<std::shared_ptr<Primitive>> & primitives, XMLElement *& element);
+			static void processObject(std::vector<std::shared_ptr<Primitive>> & primitives, XMLElement *& element);
+			static std::shared_ptr<target::Sphere> processSphere(XMLElement *& element);
 
 		public:
 			static void run(const std::string & description);

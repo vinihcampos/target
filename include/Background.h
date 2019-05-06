@@ -17,7 +17,7 @@ namespace target{
 	class Background{
 		public:
 
-			static Color interpolate(const Buffer & buffer, const Point2 p);
+			static Color sample(std::shared_ptr<Buffer> & buffer, const Point2 p);
 	};
 }
 

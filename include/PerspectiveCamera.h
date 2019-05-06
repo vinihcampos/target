@@ -3,6 +3,7 @@
 
 #include "Ray.h"
 #include "Camera.h"
+#include "Buffer.h"
 #include <math.h>
 
 namespace target{
@@ -13,9 +14,9 @@ namespace target{
 		private:
 			double fovy, fd, aspect;
 		public:
-			PerspectiveCamera(Vec3 look_from, Vec3 look_at, Vec3 vup, int nx, int ny, double fovy, double fd, double aspect)
+			PerspectiveCamera(std::shared_ptr<Buffer> & buffer, Vec3 look_from, Vec3 look_at, Vec3 vup, int nx, int ny, double fovy, double fd, double aspect)
 			: fovy{fovy}, fd{fd}, aspect{aspect}, 
-			  Camera(look_from, look_at, vup, nx, ny, 
+			  Camera(buffer, look_from, look_at, vup, nx, ny, 
 			  std::tan((fovy/2.0)*(PI/180.0)) * fd * aspect * (-1), 
 			  std::tan((fovy/2.0)*(PI/180.0)) * fd * aspect, 
 			  std::tan((fovy/2.0)*(PI/180.0)) * fd * (-1), 

@@ -6,16 +6,21 @@
 #include "Primitive.h"
 #include "Sphere.h"
 #include "Scene.h"
+#include "Integrator.h"
+#include "SampleIntegrator.h"
+#include "FlatIntegrator.h"
 #include <map>
 #include <vector>
 
 
 void target::Descriptor::run(const std::string & description){
 
-	Buffer buffer;
+	std::shared_ptr<Buffer> buffer;
 	XMLDocument xmlTarget;
-	Camera * camera;
-	std::vector<Primitive*> primitives;
+	std::shared_ptr<Camera> camera;
+	Integrator * integrator;
+	std::vector<std::shared_ptr<Primitive>> primitives;
+
 	auto file = xmlTarget.LoadFile(description.c_str());
 	auto * pRootElement = xmlTarget.RootElement();
 
@@ -46,34 +51,33 @@ void target::Descriptor::run(const std::string & description){
 		}
 	}
 
-	//primitives.push_back(new Sphere(Vec3(-1,.5,-5), .4, "sphere1")); 
-	//primitives.push_back(new Sphere(Vec3(1,-.5,-8), .4, "sphere2")); 
-	//primitives.push_back(new Sphere(Vec3(-1,-1.5,-3.5), .4, "sphere3")); 
+	Scene scene(primitives);
+	std::shared_ptr<Sampler> sampler = std::shared_ptr<Sampler>(new Sampler());
+	integrator = new FlatIntegrator(camera, sampler);
 
-	for(size_t row = 0; row < buffer.getHeight(); ++row){
+	integrator->render(scene);
+
+	/*for(size_t row = 0; row < buffer.getHeight(); ++row){
 		for(size_t col = 0; col < buffer.getWidth(); ++col){
 			Ray ray = camera->generate_ray(row,col);
-			/*if(out_perspcamera_samp_300.find(std::make_pair(row,col)) != out_perspcamera_samp_300.end())
-				//std::cout << (out_perspcamera_samp_300[std::make_pair(row,col)] == ray) << std::endl;
-				std::cout << "[" << row << "," << col << "], " << (out_perspcamera_samp_300[std::make_pair(row,col)] == ray) << ", " << ray << ", " << out_perspcamera_samp_300[std::make_pair(row,col)] << std::endl;*/
 			bool intercepted = false;
-			for(Primitive *p : primitives){
+			for(std::shared_ptr<Primitive> p : primitives){
 				if(p->intersect_p(ray)){
 					intercepted = true;
 					buffer.pixel( Point2(col, row), RED );	
 				}
 			}
 			if(!intercepted)
-				buffer.pixel( Point2(col, row), Background::interpolate( buffer, Point2(col, row) ) );
+				buffer.pixel( Point2(col, row), Background::sample( buffer, Point2(col, row) ) );
 		}
 	}
 
 	if(!settings["type"].compare("PPM")){
 		PPM::generator(buffer, settings["name"]);
-	}
+	}*/
 }
 
-std::map<std::string, std::string> target::Descriptor::processSettings(Buffer & buffer, XMLElement *& element){
+std::map<std::string, std::string> target::Descriptor::processSettings(std::shared_ptr<Buffer> & buffer, XMLElement *& element){
 	std::map<std::string, std::string> settings;
 
 	std::string elementName;
@@ -99,7 +103,7 @@ std::map<std::string, std::string> target::Descriptor::processSettings(Buffer & 
 	return settings;
 }
 
-void target::Descriptor::processCamera(Buffer & buffer, Camera *& camera, XMLElement *& element){
+void target::Descriptor::processCamera(std::shared_ptr<Buffer> & buffer, std::shared_ptr<Camera> & camera, XMLElement *& element){
 
 	int width, height, depth = 1;
 	std::string elementName;
@@ -115,7 +119,7 @@ void target::Descriptor::processCamera(Buffer & buffer, Camera *& camera, XMLEle
 		}
 	}
 
-	buffer = Buffer(width, height, depth);
+	buffer = std::shared_ptr<Buffer>(new Buffer(width, height, depth));
 
 	std::string type;
 	if(element->Attribute("type") != NULL) 
@@ -149,7 +153,7 @@ void target::Descriptor::processCamera(Buffer & buffer, Camera *& camera, XMLEle
 			}
 		}
 
-		camera = new OrthoCamera(position, target, up, width, height, l, r, b, t);
+		camera = std::shared_ptr<OrthoCamera>( new OrthoCamera(buffer, position, target, up, width, height, l, r, b, t) );
 	}else if(!type.compare("perspective")){
 		double fovy, fd, aspect;
 		aspect = width / (1.0 * height); 
@@ -179,11 +183,11 @@ void target::Descriptor::processCamera(Buffer & buffer, Camera *& camera, XMLEle
 			}
 		}
 
-		camera = new PerspectiveCamera(position, target, up, width, height, fovy, fd, aspect);
+		camera = std::shared_ptr<PerspectiveCamera>( new PerspectiveCamera(buffer, position, target, up, width, height, fovy, fd, aspect) );
 	}
 }
 
-void target::Descriptor::processBackground(Buffer & buffer, XMLElement *& element){
+void target::Descriptor::processBackground(std::shared_ptr<Buffer> & buffer, XMLElement *& element){
 	std::vector<Color> colors;
 	std::string elementName;
 	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
@@ -200,15 +204,15 @@ void target::Descriptor::processBackground(Buffer & buffer, XMLElement *& elemen
 	while(colors.size() < 4)
 		colors.push_back(last);
 
-	buffer.setTl(colors[0]);
-	buffer.setBl(colors[1]);
-	buffer.setBr(colors[2]);
-	buffer.setTr(colors[3]);
+	buffer->setTl(colors[0]);
+	buffer->setBl(colors[1]);
+	buffer->setBr(colors[2]);
+	buffer->setTr(colors[3]);
 
 	colors.clear();
 }
 
-void target::Descriptor::processScene(std::vector<Primitive*> & primitives, XMLElement *& element){
+void target::Descriptor::processScene(std::vector<std::shared_ptr<Primitive>> & primitives, XMLElement *& element){
 	std::string elementName;
 	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
 		elementName = pChild->Name();
@@ -220,19 +224,22 @@ void target::Descriptor::processScene(std::vector<Primitive*> & primitives, XMLE
 	}
 }
 
-void target::Descriptor::processObject(std::vector<Primitive*> & primitives, XMLElement *& element){
+void target::Descriptor::processObject(std::vector<std::shared_ptr<Primitive>> & primitives, XMLElement *& element){
 	std::string type = "";
 	if(element->Attribute("type") != NULL) 
 		type = element->Attribute("type");
 
 	if(!type.compare("Sphere") || !type.compare("sphere")){
 		primitives.push_back(processSphere(element));
+
+		std::shared_ptr<Material> m = std::shared_ptr<Material>(new Material(GREEN));
+		primitives.back().get()->set_material(m);
 	}else{
 		std::cerr << "The object type is invalid" << std::endl;
 	}
 }
 
-target::Sphere * target::Descriptor::processSphere(XMLElement *& element){
+std::shared_ptr<target::Sphere> target::Descriptor::processSphere(XMLElement *& element){
 	std::string name = "";
 	if(element->Attribute("name") != NULL) 
 		name = element->Attribute("name");
@@ -252,5 +259,5 @@ target::Sphere * target::Descriptor::processSphere(XMLElement *& element){
 		}
 	}
 
-	return new Sphere(Vec3(x,y,z), radius, name);
+	return std::shared_ptr<Sphere>(new Sphere(Vec3(x,y,z), radius, name));
 }

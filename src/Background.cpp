@@ -1,19 +1,19 @@
 #include "Background.h"
 
-target::Color target::Background::interpolate(const Buffer & buffer, const Point2 p){
+target::Color target::Background::sample(std::shared_ptr<Buffer> & buffer, const Point2 p){
 
 	int x1 = 0;
-	int x2 = buffer.getWidth() - 1;
+	int x2 = buffer.get()->getWidth() - 1;
 	int y1 = 0;
-	int y2 = buffer.getHeight() - 1;
+	int y2 = buffer.get()->getHeight() - 1;
 
 	float ratio = 1.0 / ( (x2-x1) * (y2-y1) * 1.0);
 
 	Color tl, bl, tr, br;
-	tl = buffer.getTl();
-	bl = buffer.getBl();
-	tr = buffer.getTr();
-	br = buffer.getBr();
+	tl = buffer.get()->getTl();
+	bl = buffer.get()->getBl();
+	tr = buffer.get()->getTr();
+	br = buffer.get()->getBr();
 
 	int productRed = bl.r()*(x2-p.x)*(y2-p.y) + br.r()*(p.x-x1)*(y2-p.y) + tl.r()*(x2-p.x)*(p.y-y1) + tr.r()*(p.x-x1)*(p.y-y1);
 	int productGreen = bl.g()*(x2-p.x)*(y2-p.y) + br.g()*(p.x-x1)*(y2-p.y) + tl.g()*(x2-p.x)*(p.y-y1) + tr.g()*(p.x-x1)*(p.y-y1);

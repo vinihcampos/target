@@ -18,11 +18,11 @@ namespace target{
 			Primitive(const std::string & name) : name{name}{}
 			virtual bool intersect( const Ray& r, SurfaceInteraction *) const = 0;
 			virtual bool intersect_p( const Ray& r ) const = 0;
-			virtual const Material * get_material(void) const = 0;// { return material; }
+			Material * get_material(void) { return material.get(); }
+			void set_material(std::shared_ptr<Material> & material){ this->material = material; }
 			inline std::string getName(){ return name; }
-		
 	};
-
+	typedef Primitive Shape;
 }
 
 #endif

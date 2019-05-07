@@ -14,6 +14,11 @@ namespace target{
 			SurfaceInteraction(const Point3&p,const Vec3&n, const Vec3&wo, float time, const Point2& uv, const Primitive *pri )
 				: p{p}, n{n}, wo{wo}, time{time}, uv{uv}, primitive{pri}{}
 
+			SurfaceInteraction(const Point3 & p, const Vec3 & n, const Vec3 & wo, float time)
+				: p{p}, n{n}, wo{wo}, time{time}{}
+
+			SurfaceInteraction(){}
+
 			Point3 p; // Contact point.
 			
 			Vec3 n; // The surface normal.

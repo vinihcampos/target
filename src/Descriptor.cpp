@@ -9,6 +9,7 @@
 #include "Integrator.h"
 #include "SampleIntegrator.h"
 #include "FlatIntegrator.h"
+#include "NormalMapIntegrator.h"
 #include <map>
 #include <vector>
 
@@ -53,7 +54,8 @@ void target::Descriptor::run(const std::string & description){
 
 	Scene scene(primitives);
 	std::shared_ptr<Sampler> sampler = std::shared_ptr<Sampler>(new Sampler());
-	integrator = new FlatIntegrator(camera, sampler);
+	//integrator = new FlatIntegrator(camera, sampler);
+	integrator = new NormalIntegrator(camera, sampler);
 
 	integrator->render(scene);
 

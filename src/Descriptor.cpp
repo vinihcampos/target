@@ -10,6 +10,7 @@
 #include "SampleIntegrator.h"
 #include "FlatIntegrator.h"
 #include "NormalMapIntegrator.h"
+#include "DepthMapIntegrator.h"
 #include <map>
 #include <vector>
 
@@ -54,8 +55,11 @@ void target::Descriptor::run(const std::string & description){
 
 	Scene scene(primitives);
 	std::shared_ptr<Sampler> sampler = std::shared_ptr<Sampler>(new Sampler());
+	std::shared_ptr<Material> farm = std::shared_ptr<Material>(new Material(GREEN));
+	std::shared_ptr<Material> nearm = std::shared_ptr<Material>(new Material(BLACK));
 	//integrator = new FlatIntegrator(camera, sampler);
-	integrator = new NormalIntegrator(camera, sampler);
+	//integrator = new NormalMapIntegrator(camera, sampler);
+	integrator = new DepthMapIntegrator(camera, farm, nearm, sampler);
 
 	integrator->render(scene);
 

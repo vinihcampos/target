@@ -18,7 +18,7 @@ namespace target{
 		public:
 			SampleIntegrator( std::shared_ptr<Camera> & camera, std::shared_ptr<Sampler> & sampler)
             : camera{camera}, sampler{sampler}{}
-			void preprocess( const Scene& scene ){}
+			virtual void preprocess( const Scene& scene ){}
 	        void render( const Scene& scene );
 			virtual Color Li( const Ray& ray, const Scene& scene, int x, int y, Sampler& sampler ) = 0;
 		

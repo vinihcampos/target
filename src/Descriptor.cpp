@@ -11,17 +11,18 @@
 #include "FlatIntegrator.h"
 #include "NormalMapIntegrator.h"
 #include "DepthMapIntegrator.h"
+#include "FlatMaterial.h"
 #include <map>
 #include <vector>
 
 
-void target::Descriptor::run(const std::string & description){
+void target::Descriptor::run(const std::string & description, std::shared_ptr<Integrator> & integrator, 
+				std::shared_ptr<Camera> & camera, std::shared_ptr<Scene> & mScene){
 
 	std::shared_ptr<Buffer> buffer;
 	XMLDocument xmlTarget;
-	std::shared_ptr<Camera> camera;
-	Integrator * integrator;
 	std::vector<std::shared_ptr<Primitive>> primitives;
+	std::map<std::string, std::shared_ptr<Material>> materials;
 
 	auto file = xmlTarget.LoadFile(description.c_str());
 	auto * pRootElement = xmlTarget.RootElement();
@@ -35,6 +36,8 @@ void target::Descriptor::run(const std::string & description){
 		elementName = pChild->Name();
 		if(!elementName.compare("Camera") || !elementName.compare("camera")){
 			target::Descriptor::processCamera(buffer, camera, pChild);
+		}else if(!elementName.compare("Materials") || !elementName.compare("materials")){
+			target::Descriptor::processMaterials(materials, pChild);
 		}
 	}
 
@@ -47,40 +50,22 @@ void target::Descriptor::run(const std::string & description){
 		}else if(!elementName.compare("Settings") || !elementName.compare("settings")){
 			settings = target::Descriptor::processSettings(buffer, pChild);
 		}else if(!elementName.compare("Scene") || !elementName.compare("scene")){
-			target::Descriptor::processScene(primitives, pChild);
+			target::Descriptor::processScene(primitives, materials, pChild);
+		}else if(!elementName.compare("Materials") || !elementName.compare("materials")){
+			continue;
 		}else{
 			std::cerr << "The element " << elementName << " is invalid" << std::endl;
 		}
 	}
 
-	Scene scene(primitives);
+	mScene = std::shared_ptr<Scene>(new Scene(primitives));
+
 	std::shared_ptr<Sampler> sampler = std::shared_ptr<Sampler>(new Sampler());
 	std::shared_ptr<Material> farm = std::shared_ptr<Material>(new Material(GREEN));
 	std::shared_ptr<Material> nearm = std::shared_ptr<Material>(new Material(BLACK));
-	//integrator = new FlatIntegrator(camera, sampler);
-	//integrator = new NormalMapIntegrator(camera, sampler);
-	integrator = new DepthMapIntegrator(camera, farm, nearm, sampler);
-
-	integrator->render(scene);
-
-	/*for(size_t row = 0; row < buffer.getHeight(); ++row){
-		for(size_t col = 0; col < buffer.getWidth(); ++col){
-			Ray ray = camera->generate_ray(row,col);
-			bool intercepted = false;
-			for(std::shared_ptr<Primitive> p : primitives){
-				if(p->intersect_p(ray)){
-					intercepted = true;
-					buffer.pixel( Point2(col, row), RED );	
-				}
-			}
-			if(!intercepted)
-				buffer.pixel( Point2(col, row), Background::sample( buffer, Point2(col, row) ) );
-		}
-	}
-
-	if(!settings["type"].compare("PPM")){
-		PPM::generator(buffer, settings["name"]);
-	}*/
+	integrator = std::shared_ptr<FlatIntegrator>(new FlatIntegrator(camera, settings["name"], sampler));
+	//integrator = std::shared_ptr<NormalMapIntegrator>(new NormalMapIntegrator(camera, settings["name"], sampler));
+	//integrator = std::shared_ptr<DepthMapIntegrator>(new DepthMapIntegrator(camera, settings["name"], farm, nearm, sampler));
 }
 
 std::map<std::string, std::string> target::Descriptor::processSettings(std::shared_ptr<Buffer> & buffer, XMLElement *& element){
@@ -218,28 +203,37 @@ void target::Descriptor::processBackground(std::shared_ptr<Buffer> & buffer, XML
 	colors.clear();
 }
 
-void target::Descriptor::processScene(std::vector<std::shared_ptr<Primitive>> & primitives, XMLElement *& element){
+void target::Descriptor::processScene(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, XMLElement *& element){
 	std::string elementName;
 	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
 		elementName = pChild->Name();
 		if(!elementName.compare("Object") || !elementName.compare("object")){
-			processObject(primitives, pChild);
+			processObject(primitives, materials, pChild);
 		}else{
 			std::cerr << "The element " << elementName << " is invalid" << std::endl;
 		}
 	}
 }
 
-void target::Descriptor::processObject(std::vector<std::shared_ptr<Primitive>> & primitives, XMLElement *& element){
+void target::Descriptor::processObject(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, XMLElement *& element){
 	std::string type = "";
+	std::string material_name = "";
+
 	if(element->Attribute("type") != NULL) 
 		type = element->Attribute("type");
+
+	if(element->Attribute("material") != NULL) 
+		material_name = element->Attribute("material");
 
 	if(!type.compare("Sphere") || !type.compare("sphere")){
 		primitives.push_back(processSphere(element));
 
-		std::shared_ptr<Material> m = std::shared_ptr<Material>(new Material(GREEN));
-		primitives.back().get()->set_material(m);
+		if(material_name.compare("")){
+			primitives.back().get()->set_material(materials[material_name]);
+		}else{
+			std::shared_ptr<Material> m = std::shared_ptr<Material>(new Material(GREEN));
+			primitives.back().get()->set_material(m);
+		}
 	}else{
 		std::cerr << "The object type is invalid" << std::endl;
 	}
@@ -251,7 +245,10 @@ std::shared_ptr<target::Sphere> target::Descriptor::processSphere(XMLElement *& 
 		name = element->Attribute("name");
 
 	std::string elementName;
-	double radius, x, y, z;
+	double radius = 1;
+	double x = 0;
+	double y = 0;
+	double z = 0;
 	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
 		elementName = pChild->Name();
 		if(!elementName.compare("Radius") || !elementName.compare("radius")){
@@ -266,4 +263,40 @@ std::shared_ptr<target::Sphere> target::Descriptor::processSphere(XMLElement *& 
 	}
 
 	return std::shared_ptr<Sphere>(new Sphere(Vec3(x,y,z), radius, name));
+}
+
+void target::Descriptor::processMaterials(std::map<std::string, std::shared_ptr<Material>> & materials, XMLElement *& element){
+	std::string elementName;
+
+	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
+		elementName = pChild->Name();
+		if(!elementName.compare("Material") || !elementName.compare("material")){
+			std::string type = "";
+			std::string name = pChild->Attribute("name");
+
+			if(pChild->Attribute("type") != NULL) {
+				type = pChild->Attribute("type");
+				if(!type.compare("flat") || !type.compare("Flat")){
+					materials[name] =  std::shared_ptr<Material>(new FlatMaterial(processFlatMaterial(pChild)));
+				}
+			}
+		}
+	}
+}
+
+target::Color target::Descriptor::processFlatMaterial(XMLElement *& element){
+	std::string elementName;
+
+	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
+		elementName = pChild->Name();
+		if(!elementName.compare("Diffuse") || !elementName.compare("diffuse")){
+			double r = pChild->DoubleAttribute("r", 0.0);
+			double g = pChild->DoubleAttribute("g", 0.0);
+			double b = pChild->DoubleAttribute("b", 0.0);
+
+			return Color(r,g,b);
+		}
+	}
+
+	return BLACK;
 }

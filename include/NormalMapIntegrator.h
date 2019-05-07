@@ -6,8 +6,8 @@
 namespace target{
 	class NormalMapIntegrator : public SampleIntegrator{
 		public:
-			NormalMapIntegrator( std::shared_ptr<Camera> & camera, std::shared_ptr<Sampler> & sampler)
-            : SampleIntegrator(camera, sampler){}
+			NormalMapIntegrator( std::shared_ptr<Camera> & camera, const std::string & name, std::shared_ptr<Sampler> & sampler)
+            : SampleIntegrator(camera, name, sampler){}
 			Color Li( const Ray& ray, const Scene& scene, int x, int y, Sampler& sampler ) override;
 	};
 }

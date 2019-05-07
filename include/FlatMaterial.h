@@ -7,6 +7,7 @@ namespace target{
 
 	class FlatMaterial : public Material{
 		public:
+			FlatMaterial(const Color & color) : Material{color}{}
 			inline Color kd(){ return this->color; }
 	};
 

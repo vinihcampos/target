@@ -12,5 +12,5 @@ void target::SampleIntegrator::render( const Scene& scene ){
             camera.get()->buffer->pixel( Point2(col, row), L );
         }
     }
-    PPM::generator(camera.get()->buffer, "saida");
+    PPM::generator(camera.get()->buffer, name);
 }

@@ -10,9 +10,9 @@
     </background>
     <camera type="orthographic">
         <position x="0" y="0" z="2"/> 
-        <target x="0" y="0" z="-10"/>
+        <target x="4" y="0" z="-10"/>
         <up x="0" y="1" z="1"/>
-        <vpdim l="-3" r="3" b="-2.25" t="2.25" /> 
+        <vpdim l="-6" r="6" b="-4.5" t="4.5" /> 
         <width value="800"/>
         <height value="600"/>
     </camera>
@@ -45,4 +45,9 @@
             <diffuse r="253" g="153" b="253"/>
         </material>
     </materials>
+    <running>
+        <integrator type="flat">
+            <spp value="1"/>
+        </integrator>
+    </running>
 </target>

@@ -15,7 +15,6 @@
 #include <map>
 #include <vector>
 
-
 void target::Descriptor::run(const std::string & description, std::shared_ptr<Integrator> & integrator, 
 				std::shared_ptr<Camera> & camera, std::shared_ptr<Scene> & mScene){
 
@@ -23,6 +22,8 @@ void target::Descriptor::run(const std::string & description, std::shared_ptr<In
 	XMLDocument xmlTarget;
 	std::vector<std::shared_ptr<Primitive>> primitives;
 	std::map<std::string, std::shared_ptr<Material>> materials;
+	std::shared_ptr<Material> farm;
+	std::shared_ptr<Material> nearm;
 
 	auto file = xmlTarget.LoadFile(description.c_str());
 	auto * pRootElement = xmlTarget.RootElement();
@@ -31,6 +32,7 @@ void target::Descriptor::run(const std::string & description, std::shared_ptr<In
 	std::map<std::string, std::string> settings;
 	settings["name"] = "scene";
 	settings["type"] = "PPM";
+	std::string integrator_type = "flat";
 
 	for(XMLElement * pChild = pRootElement->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
 		elementName = pChild->Name();
@@ -38,6 +40,8 @@ void target::Descriptor::run(const std::string & description, std::shared_ptr<In
 			target::Descriptor::processCamera(buffer, camera, pChild);
 		}else if(!elementName.compare("Materials") || !elementName.compare("materials")){
 			target::Descriptor::processMaterials(materials, pChild);
+		}else if(!elementName.compare("Running") || !elementName.compare("running")){
+			integrator_type = target::Descriptor::processSetup(farm, nearm, pChild);
 		}
 	}
 
@@ -53,19 +57,24 @@ void target::Descriptor::run(const std::string & description, std::shared_ptr<In
 			target::Descriptor::processScene(primitives, materials, pChild);
 		}else if(!elementName.compare("Materials") || !elementName.compare("materials")){
 			continue;
+		}else if(!elementName.compare("Running") || !elementName.compare("running")){
+			continue;
 		}else{
 			std::cerr << "The element " << elementName << " is invalid" << std::endl;
 		}
 	}
 
 	mScene = std::shared_ptr<Scene>(new Scene(primitives));
-
 	std::shared_ptr<Sampler> sampler = std::shared_ptr<Sampler>(new Sampler());
-	std::shared_ptr<Material> farm = std::shared_ptr<Material>(new Material(GREEN));
-	std::shared_ptr<Material> nearm = std::shared_ptr<Material>(new Material(BLACK));
-	integrator = std::shared_ptr<FlatIntegrator>(new FlatIntegrator(camera, settings["name"], sampler));
-	//integrator = std::shared_ptr<NormalMapIntegrator>(new NormalMapIntegrator(camera, settings["name"], sampler));
-	//integrator = std::shared_ptr<DepthMapIntegrator>(new DepthMapIntegrator(camera, settings["name"], farm, nearm, sampler));
+
+	//Check integrator
+	if(!integrator_type.compare("flat")){
+		integrator = std::shared_ptr<FlatIntegrator>(new FlatIntegrator(camera, settings["name"], sampler));
+	}else if(!integrator_type.compare("depth")){
+		integrator = std::shared_ptr<DepthMapIntegrator>(new DepthMapIntegrator(camera, settings["name"], farm, nearm, sampler));
+	}else if(!integrator_type.compare("normal")){
+		integrator = std::shared_ptr<NormalMapIntegrator>(new NormalMapIntegrator(camera, settings["name"], sampler));
+	}
 }
 
 std::map<std::string, std::string> target::Descriptor::processSettings(std::shared_ptr<Buffer> & buffer, XMLElement *& element){
@@ -299,4 +308,36 @@ target::Color target::Descriptor::processFlatMaterial(XMLElement *& element){
 	}
 
 	return BLACK;
+}
+
+std::string target::Descriptor::processSetup(std::shared_ptr<Material> & far, std::shared_ptr<Material> & near, XMLElement *& element){
+	std::string elementName;
+
+	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
+		elementName = pChild->Name();
+		if(!elementName.compare("Integrator") || !elementName.compare("integrator")){
+			std::string type = pChild->Attribute("type");
+			if(!type.compare("depth")){
+
+				for(XMLElement * pChild_ = pChild->FirstChildElement(); pChild_ != NULL; pChild_ = pChild_->NextSiblingElement()){
+					elementName = pChild_->Name();
+					if(!elementName.compare("Near") || !elementName.compare("near")){
+						double r = pChild_->DoubleAttribute("r", 0.0);
+						double g = pChild_->DoubleAttribute("g", 0.0);
+						double b = pChild_->DoubleAttribute("b", 0.0);
+						near = std::shared_ptr<Material>(new Material(Color(r,g,b)));
+					}else if(!elementName.compare("Far") || !elementName.compare("far")){
+						double r = pChild_->DoubleAttribute("r", 0.0);
+						double g = pChild_->DoubleAttribute("g", 0.0);
+						double b = pChild_->DoubleAttribute("b", 0.0);
+						far = std::shared_ptr<Material>(new Material(Color(r,g,b)));
+					}
+				}
+
+			}
+			return type;
+		}
+	}
+
+	return "";
 }

@@ -27,6 +27,7 @@ namespace target{
 			static void processObject(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, XMLElement *& element);
 			static void processMaterials(std::map<std::string, std::shared_ptr<Material>> & materials, XMLElement *& element);
 			static Color processFlatMaterial(XMLElement *& element);
+			static std::string processSetup(std::shared_ptr<Material> & far, std::shared_ptr<Material> & near, XMLElement *& element);
 			static std::shared_ptr<target::Sphere> processSphere(XMLElement *& element);
 
 		public:

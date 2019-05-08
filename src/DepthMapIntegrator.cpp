@@ -21,7 +21,8 @@ target::Color target::DepthMapIntegrator::Li( const Ray& ray, const Scene& scene
         		 interpolation * (farm->kd().b()-nearm->kd().b()) + nearm->kd().b());
         return c;
     }else {
-        return scene.background.get()->sample(camera.get()->buffer, Point2(y,x));
+        FlatMaterial * farm  = static_cast<FlatMaterial*>(far.get());
+        return farm->kd();
     }
 }
 

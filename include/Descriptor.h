@@ -7,9 +7,11 @@
 #include "Primitive.h"
 #include "Sphere.h"
 #include "Integrator.h"
+#include "SampleIntegrator.h"
 #include "Camera.h"
 #include "Scene.h"
 #include "Material.h"
+#include "Light.h"
 #include <string>
 #include <map>
 #include <vector>
@@ -23,11 +25,13 @@ namespace target{
 			static std::map<std::string, std::string> processSettings(std::shared_ptr<Buffer> & buffer, XMLElement *& element);
 			static void processBackground(std::shared_ptr<Buffer> & buffer, XMLElement *& element);
 			static void processCamera(std::shared_ptr<Buffer> & buffer, std::shared_ptr<Camera> & camera, XMLElement *& element);
-			static void processScene(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, XMLElement *& element);
+			static void processScene(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, std::vector<std::shared_ptr<Light>> & lights, XMLElement *& element);
 			static void processObject(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, XMLElement *& element);
+			static void processLight(std::vector<std::shared_ptr<Light>> & lights, XMLElement *& element);
 			static void processMaterials(std::map<std::string, std::shared_ptr<Material>> & materials, XMLElement *& element);
 			static Color processFlatMaterial(XMLElement *& element);
-			static std::string processSetup(std::shared_ptr<Material> & far, std::shared_ptr<Material> & near, XMLElement *& element);
+			static std::shared_ptr<target::Material> processBlinnMaterial(XMLElement *& element);
+			static void processSetup(std::shared_ptr<SampleIntegrator> & integrator, XMLElement *& element);
 			static std::shared_ptr<target::Sphere> processSphere(XMLElement *& element);
 
 		public:

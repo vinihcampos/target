@@ -20,8 +20,12 @@ namespace target{
 		public:
 			SampleIntegrator( std::shared_ptr<Camera> & camera, const std::string & name, std::shared_ptr<Sampler> & sampler)
             : camera{camera}, name{name}, sampler{sampler}{}
-			virtual void preprocess( const Scene& scene ){}
+            SampleIntegrator(){}
+            inline void set_camera(std::shared_ptr<Camera> & camera_){ camera = camera_; }
+            inline void set_name(const std::string & name_){ name = name_; }
+            inline void set_sampler(std::shared_ptr<Sampler> & sampler_){ sampler = sampler_; }
 	        void render( const Scene& scene );
+			virtual void preprocess( const Scene& scene ){}
 			virtual Color Li( const Ray& ray, const Scene& scene, int x, int y, Sampler& sampler ) = 0;
 		
 	};

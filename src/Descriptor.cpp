@@ -11,7 +11,11 @@
 #include "FlatIntegrator.h"
 #include "NormalMapIntegrator.h"
 #include "DepthMapIntegrator.h"
+#include "BlinnPhongIntegrator.h"
 #include "FlatMaterial.h"
+#include "BlinnPhongMaterial.h"
+#include "AmbientLight.h"
+#include "PointLight.h"
 #include <map>
 #include <vector>
 
@@ -22,8 +26,8 @@ void target::Descriptor::run(const std::string & description, std::shared_ptr<In
 	XMLDocument xmlTarget;
 	std::vector<std::shared_ptr<Primitive>> primitives;
 	std::map<std::string, std::shared_ptr<Material>> materials;
-	std::shared_ptr<Material> farm;
-	std::shared_ptr<Material> nearm;
+	std::shared_ptr<SampleIntegrator> si;
+	std::vector<std::shared_ptr<Light>> lights;
 
 	auto file = xmlTarget.LoadFile(description.c_str());
 	auto * pRootElement = xmlTarget.RootElement();
@@ -41,7 +45,7 @@ void target::Descriptor::run(const std::string & description, std::shared_ptr<In
 		}else if(!elementName.compare("Materials") || !elementName.compare("materials")){
 			target::Descriptor::processMaterials(materials, pChild);
 		}else if(!elementName.compare("Running") || !elementName.compare("running")){
-			integrator_type = target::Descriptor::processSetup(farm, nearm, pChild);
+			target::Descriptor::processSetup(si,  pChild);
 		}
 	}
 
@@ -54,7 +58,7 @@ void target::Descriptor::run(const std::string & description, std::shared_ptr<In
 		}else if(!elementName.compare("Settings") || !elementName.compare("settings")){
 			settings = target::Descriptor::processSettings(buffer, pChild);
 		}else if(!elementName.compare("Scene") || !elementName.compare("scene")){
-			target::Descriptor::processScene(primitives, materials, pChild);
+			target::Descriptor::processScene(primitives, materials, lights, pChild);
 		}else if(!elementName.compare("Materials") || !elementName.compare("materials")){
 			continue;
 		}else if(!elementName.compare("Running") || !elementName.compare("running")){
@@ -64,17 +68,13 @@ void target::Descriptor::run(const std::string & description, std::shared_ptr<In
 		}
 	}
 
-	mScene = std::shared_ptr<Scene>(new Scene(primitives));
+	mScene = std::shared_ptr<Scene>(new Scene(primitives, lights));
 	std::shared_ptr<Sampler> sampler = std::shared_ptr<Sampler>(new Sampler());
+	si->set_camera(camera);
+	si->set_name(settings["name"]);
+	si->set_sampler(sampler);
 
-	//Check integrator
-	if(!integrator_type.compare("flat")){
-		integrator = std::shared_ptr<FlatIntegrator>(new FlatIntegrator(camera, settings["name"], sampler));
-	}else if(!integrator_type.compare("depth")){
-		integrator = std::shared_ptr<DepthMapIntegrator>(new DepthMapIntegrator(camera, settings["name"], farm, nearm, sampler));
-	}else if(!integrator_type.compare("normal")){
-		integrator = std::shared_ptr<NormalMapIntegrator>(new NormalMapIntegrator(camera, settings["name"], sampler));
-	}
+	integrator = std::shared_ptr<SampleIntegrator>(si);
 }
 
 std::map<std::string, std::string> target::Descriptor::processSettings(std::shared_ptr<Buffer> & buffer, XMLElement *& element){
@@ -212,12 +212,14 @@ void target::Descriptor::processBackground(std::shared_ptr<Buffer> & buffer, XML
 	colors.clear();
 }
 
-void target::Descriptor::processScene(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, XMLElement *& element){
+void target::Descriptor::processScene(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, std::vector<std::shared_ptr<Light>> & lights, XMLElement *& element){
 	std::string elementName;
 	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
 		elementName = pChild->Name();
 		if(!elementName.compare("Object") || !elementName.compare("object")){
 			processObject(primitives, materials, pChild);
+		}else if(!elementName.compare("Light") || !elementName.compare("light")){
+			processLight(lights, pChild);
 		}else{
 			std::cerr << "The element " << elementName << " is invalid" << std::endl;
 		}
@@ -245,6 +247,55 @@ void target::Descriptor::processObject(std::vector<std::shared_ptr<Primitive>> &
 		}
 	}else{
 		std::cerr << "The object type is invalid" << std::endl;
+	}
+}
+
+void target::Descriptor::processLight(std::vector<std::shared_ptr<Light>> & lights, XMLElement *& element){
+	std::string type = "";
+	std::string light_name = "";
+
+	if(element->Attribute("type") != NULL) 
+		type = element->Attribute("type");
+
+	if(element->Attribute("name") != NULL) 
+		light_name = element->Attribute("name");
+
+	if(!type.compare("ambient")){
+		Color intesity;
+		std::string elementName;
+		for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
+			elementName = pChild->Name();
+			if(!elementName.compare("Intensity") || !elementName.compare("intensity")){
+				double r = pChild->DoubleAttribute("r", 0.0);
+				double g = pChild->DoubleAttribute("g", 0.0);
+				double b = pChild->DoubleAttribute("b", 0.0);
+				intesity = Color(r,g,b);
+			}else{
+				std::cerr << "The element " << elementName << " is invalid" << std::endl;
+			}
+		}
+		lights.push_back( std::shared_ptr<AmbientLight>(new AmbientLight(LightType::AMBIENT, light_name, intesity)) );
+	}else if(!type.compare("point")){
+		Color intesity;
+		Point3 position;
+		std::string elementName;
+		for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
+			elementName = pChild->Name();
+			if(!elementName.compare("Intensity") || !elementName.compare("intensity")){
+				double r = pChild->DoubleAttribute("r", 0.0);
+				double g = pChild->DoubleAttribute("g", 0.0);
+				double b = pChild->DoubleAttribute("b", 0.0);
+				intesity = Color(r,g,b);
+			}else if(!elementName.compare("Position") || !elementName.compare("position")){
+				double x = pChild->DoubleAttribute("x", 0.0);
+				double y = pChild->DoubleAttribute("y", 0.0);
+				double z = pChild->DoubleAttribute("z", 0.0);
+				position = Point3(x,y,z);
+			}else{
+				std::cerr << "The element " << elementName << " is invalid" << std::endl;
+			}
+		}
+		lights.push_back( std::shared_ptr<PointLight>(new PointLight(LightType::POINT, light_name, intesity,position)) );
 	}
 }
 
@@ -287,6 +338,8 @@ void target::Descriptor::processMaterials(std::map<std::string, std::shared_ptr<
 				type = pChild->Attribute("type");
 				if(!type.compare("flat") || !type.compare("Flat")){
 					materials[name] =  std::shared_ptr<Material>(new FlatMaterial(processFlatMaterial(pChild)));
+				}else if(!type.compare("blinn") || !type.compare("Blinn")){
+					materials[name] = processBlinnMaterial(pChild);
 				}
 			}
 		}
@@ -310,15 +363,50 @@ target::Color target::Descriptor::processFlatMaterial(XMLElement *& element){
 	return BLACK;
 }
 
-std::string target::Descriptor::processSetup(std::shared_ptr<Material> & far, std::shared_ptr<Material> & near, XMLElement *& element){
+std::shared_ptr<target::Material> target::Descriptor::processBlinnMaterial(XMLElement *& element){
+	std::string elementName;
+	Color difuse, ambient, specular;
+	double glossiness;
+
+	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
+		elementName = pChild->Name();
+		if(!elementName.compare("Diffuse") || !elementName.compare("diffuse")){
+			double r = pChild->DoubleAttribute("r", 0.0);
+			double g = pChild->DoubleAttribute("g", 0.0);
+			double b = pChild->DoubleAttribute("b", 0.0);
+
+			difuse = Color(r,g,b);
+		}else if(!elementName.compare("Ambient") || !elementName.compare("ambient")){
+			double r = pChild->DoubleAttribute("r", 0.0);
+			double g = pChild->DoubleAttribute("g", 0.0);
+			double b = pChild->DoubleAttribute("b", 0.0);
+
+			ambient = Color(r,g,b);
+		}else if(!elementName.compare("Specular") || !elementName.compare("specular")){
+			double r = pChild->DoubleAttribute("r", 0.0);
+			double g = pChild->DoubleAttribute("g", 0.0);
+			double b = pChild->DoubleAttribute("b", 0.0);
+
+			specular = Color(r,g,b);
+		}else if(!elementName.compare("Glossiness") || !elementName.compare("glossiness")){
+			glossiness = pChild->DoubleAttribute("value", 0);
+		}
+	}
+
+	return std::shared_ptr<Material>(new BlinnPhongMaterial(difuse, ambient, specular, glossiness));
+}
+
+void target::Descriptor::processSetup(std::shared_ptr<SampleIntegrator> & integrator, XMLElement *& element){
 	std::string elementName;
 
 	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
 		elementName = pChild->Name();
 		if(!elementName.compare("Integrator") || !elementName.compare("integrator")){
 			std::string type = pChild->Attribute("type");
+			int spp, depth;
 			if(!type.compare("depth")){
-
+				std::shared_ptr<Material> far;
+				std::shared_ptr<Material> near;
 				for(XMLElement * pChild_ = pChild->FirstChildElement(); pChild_ != NULL; pChild_ = pChild_->NextSiblingElement()){
 					elementName = pChild_->Name();
 					if(!elementName.compare("Near") || !elementName.compare("near")){
@@ -334,10 +422,32 @@ std::string target::Descriptor::processSetup(std::shared_ptr<Material> & far, st
 					}
 				}
 
+				integrator = std::shared_ptr<DepthMapIntegrator>(new DepthMapIntegrator(far, near));
+			}else if(!type.compare("flat") || !type.compare("normal")){
+				for(XMLElement * pChild_ = pChild->FirstChildElement(); pChild_ != NULL; pChild_ = pChild_->NextSiblingElement()){
+					elementName = pChild_->Name();
+					if(!elementName.compare("Spp") || !elementName.compare("spp")){
+						spp = pChild->IntAttribute("value", 0);
+					}
+				}
+
+				if(!type.compare("flat")){
+					integrator = std::shared_ptr<FlatIntegrator>(new FlatIntegrator());
+				}else{
+					integrator = std::shared_ptr<NormalMapIntegrator>(new NormalMapIntegrator());
+				}
+
+			}else if(!type.compare("blinn")){
+				for(XMLElement * pChild_ = pChild->FirstChildElement(); pChild_ != NULL; pChild_ = pChild_->NextSiblingElement()){
+					elementName = pChild_->Name();
+					if(!elementName.compare("Spp") || !elementName.compare("spp")){
+						spp = pChild->IntAttribute("value", 0);
+					}else if(!elementName.compare("Depth") || !elementName.compare("depth")){
+						depth = pChild->IntAttribute("depth", 0);
+					}
+				}
+				integrator = std::shared_ptr<BlinnPhongIntegrator>(new BlinnPhongIntegrator());
 			}
-			return type;
 		}
 	}
-
-	return "";
 }

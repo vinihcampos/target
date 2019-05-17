@@ -12,8 +12,8 @@
 namespace target{
 	class Scene{
 	    public:
-	        std::vector<std::shared_ptr<Light>> lights; // list of lights
-	        std::shared_ptr< Background > background; // The background object.
+	        std::vector<std::shared_ptr<Light>> lights;
+	        std::shared_ptr< Background > background;
 			std::vector<std::shared_ptr<Primitive>> primitives;
 
 			Scene( std::vector<std::shared_ptr<Primitive>> prs, const std::vector<std::shared_ptr<Light>>& ls )
@@ -25,6 +25,7 @@ namespace target{
 	        bool intersect( Ray & r, SurfaceInteraction *isect ) const{
 	        	for(std::shared_ptr<Primitive> pr : primitives){
 	        		if(pr->intersect(r, isect)){
+	        			isect->primitive = pr;
 	        			return true;
 	        		}
 	        	}

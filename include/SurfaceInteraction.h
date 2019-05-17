@@ -5,13 +5,14 @@
 #include "Point3.h"
 #include "Point2.h"
 #include "Vec3.h"
+#include <memory>
 
 namespace target{
 
 	class Primitive;
 	class SurfaceInteraction{
 		public:
-			SurfaceInteraction(const Point3&p,const Vec3&n, const Vec3&wo, float time, const Point2& uv, const Primitive *pri )
+			SurfaceInteraction(const Point3&p,const Vec3&n, const Vec3&wo, float time, const Point2& uv, std::shared_ptr<Primitive> & pri )
 				: p{p}, n{n}, wo{wo}, time{time}, uv{uv}, primitive{pri}{}
 
 			SurfaceInteraction(const Point3 & p, const Vec3 & n, const Vec3 & wo, float time)
@@ -29,7 +30,7 @@ namespace target{
 			
 			Point2 uv; // Parametric coordinate (u,v) of the hit surface.
 			
-			const Primitive *primitive = nullptr; // Pointer to the primitive.
+			std::shared_ptr<Primitive> primitive; // Pointer to the primitive.
 	};
 
 }

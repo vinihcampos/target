@@ -78,6 +78,16 @@ namespace target{
 				return point.x*point.x + point.y*point.y + point.z*point.z;
 			}
 
+			inline Vec3 clamp(double minv, double maxv){
+				for (int i = 0; i < 3; ++i){
+					if(point[i] < minv)
+						point[i] = minv;
+					else if(point[i] > maxv)
+						point[i] = maxv;
+				}
+				return *this;
+			}
+
 			friend inline std::ostream& operator<<(std::ostream &os, const Vec3 &v){
 				os << v.x() << " " << v.y() << " " << v.z();
 				return os;

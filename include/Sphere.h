@@ -36,8 +36,8 @@ namespace target{
 				if(surface != nullptr){
 					surface->time = min_root;
 					surface->p = r(min_root);
-					surface->n = (Vec3(surface->p) - center);
-					surface->wo = (r.getDirection() - origin) * (-1);
+					surface->n = (Vec3(center) - surface->p);
+					surface->wo = (origin - r.getDirection()) * (-1);
 				}
 
 				return true; 

@@ -8,6 +8,7 @@ namespace target{
 		public:
 			FlatIntegrator( std::shared_ptr<Camera> & camera, const std::string & name, std::shared_ptr<Sampler> & sampler)
             : SampleIntegrator(camera, name, sampler){}
+            FlatIntegrator() : SampleIntegrator(){}
 			Color Li( const Ray& ray, const Scene& scene, int x, int y, Sampler& sampler ) override;
 	};
 }

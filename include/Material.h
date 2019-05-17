@@ -5,9 +5,9 @@ namespace target{
 
 	class Material{
 		protected:
-			Color color;
+			Color difuse;
 		public:
-			Material(const Color & color) : color{color}{}
+			Material(const Color & difuse) : difuse{difuse}{}
 			virtual ~Material() = default;
 	};
 

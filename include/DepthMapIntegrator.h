@@ -16,6 +16,7 @@ namespace target{
 		public:
 			DepthMapIntegrator( std::shared_ptr<Camera> & camera, const std::string & name,std::shared_ptr<Material> & far, std::shared_ptr<Material> & near, std::shared_ptr<Sampler> & sampler)
             : far{far}, near{near}, SampleIntegrator(camera, name, sampler){}
+            DepthMapIntegrator(std::shared_ptr<Material> & far, std::shared_ptr<Material> & near) : far{far}, near{near}, SampleIntegrator(){}
 			Color Li( const Ray& ray, const Scene& scene, int x, int y, Sampler& sampler ) override;
 			void preprocess( const Scene& scene ) override;
 	};

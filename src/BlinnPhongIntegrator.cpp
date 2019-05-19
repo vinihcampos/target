@@ -5,6 +5,7 @@
 #include "AmbientLight.h"
 #include "PointLight.h"
 #include <memory>
+#include <limits>
 
 target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& scene, int x, int y, Sampler& sampler ){
     
@@ -20,7 +21,6 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
         Vec3 v = isect->wo.norm();
 
         Color color_result;
-
         for (std::shared_ptr<Light> l : scene.lights){
             switch(l->get_type()){
                 case LightType::AMBIENT:
@@ -30,9 +30,13 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
                     {
                         PointLight * pl = dynamic_cast<PointLight*>(l.get());
                         Vec3 l = Vec3(Vec3(isect->p) - pl->get_position()).norm();
-                        Vec3 h = (v + l) / (v + l).length();
-                        color_result += kd * pl->get_intensity() * std::max(0.0, n.dot(l)) +
+
+                        r = Ray(isect->p, l*(-1));
+                        if(!scene.intersect_p(r, 0.001, std::numeric_limits<double>::max())){
+                            Vec3 h = (v + l) / (v + l).length();
+                            color_result += kd * pl->get_intensity() * std::max(0.0, n.dot(l)) +
                                         ks * pl->get_intensity() * std::pow(std::max(0.0, n.dot(h)), glossiness);
+                        }
                     }
                     break;
                 case LightType::DIRECTIONAL:

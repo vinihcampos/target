@@ -32,11 +32,18 @@ namespace target{
 	        	return false;
 	        }
 	        
-	        bool intersect_p( const Ray& r, std::shared_ptr<Primitive> & primitive) const {
-
+	        bool intersect_p( const Ray& r) const {
 	        	for(std::shared_ptr<Primitive> pr : primitives){
 	        		if(pr->intersect_p(r)){
-	        			primitive = pr;
+	        			return true;
+	        		}
+	        	}
+	        	return false;
+	        }
+
+	        bool intersect_p( const Ray& r, double tmin, double tmax) const {
+	        	for(std::shared_ptr<Primitive> pr : primitives){
+	        		if(pr->intersect_p(r, tmin, tmax)){
 	        			return true;
 	        		}
 	        	}

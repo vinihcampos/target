@@ -1,0 +1,138 @@
+<target>
+    <settings>
+        <output name="spheres_row"/>
+    </settings>
+    <background>
+        <color r="18"   g="101"    b="143"/> <!-- top left -->
+    </background>
+    <camera type="orthographic">
+        <position x="0" y="0" z="2"/> <!-- located at the origin -->
+        <target x="0" y="0" z="-10"/> <!-- looking down the -Z axis -->
+        <up x="0" y="1" z="1"/>       <!-- the camera's up vector -->
+        <!-- Specific parameters for orthographic projection -->
+        <vpdim l="-5" r="5" b="-1" t="1" /> <!-- View plane dimensions [left right bottom top] -->
+        <!-- Retina/image dimensions -->
+        <width value="5000"/>
+        <height value="1000"/>
+    </camera>
+    <scene>
+        <!-- Geometries -->
+        <object type="sphere" name="sphere1" material="redish_2" >
+            <radius value="0.4"/>
+            <center x="-4.0" y="0.0" z="-1"/>
+        </object>
+        <object type="sphere" name="sphere1" material="redish_4" >
+            <radius value="0.4"/>
+            <center x="-3.0" y="0.0" z="-1"/>
+        </object>
+        <object type="sphere" name="sphere1" material="redish_8" >
+            <radius value="0.4"/>
+            <center x="-2.0" y="0.0" z="-1"/>
+        </object>
+        <object type="sphere" name="sphere1" material="redish_16" >
+            <radius value="0.4"/>
+            <center x="-1.0" y="0.0" z="-1"/>
+        </object>
+        <object type="sphere" name="sphere1" material="redish_32" >
+            <radius value="0.4"/>
+            <center x="0.0" y="0.0" z="-1"/>
+        </object>
+        <object type="sphere" name="sphere1" material="redish_64" >
+            <radius value="0.4"/>
+            <center x="1.0" y="0.0" z="-1"/>
+        </object>
+        <object type="sphere" name="sphere1" material="redish_128" >
+            <radius value="0.4"/>
+            <center x="2.0" y="0.0" z="-1"/>
+        </object>
+        <object type="sphere" name="sphere1" material="redish_256" >
+            <radius value="0.4"/>
+            <center x="3.0" y="0.0" z="-1"/>
+        </object>
+        <object type="sphere" name="sphere1" material="redish_512" >
+            <radius value="0.4"/>
+            <center x="4.0" y="0.0" z="-1"/>
+        </object>
+
+        <!-- Lights -->
+        <light type="ambient" name="ambient_light">
+            <intensity r="0.1" g="0.1" b="0.1"/>
+        </light>
+        <light type="directional" name="point_light">
+            <intensity r="0.9" g="0.9" b="0.9"/>
+            <direction x="0.5" y="0.5" z="1"/>
+        </light>
+    </scene>
+    <materials>
+        <!-- Library of materials -->
+        <material type="blinn" name="redish_2">
+            <ambient r="0.2" g="0.2" b="0.2"/>
+                <!-- <diffuse r="0.9" g="0.2" b="0.1"/> -->
+            <diffuse r="0.5" g="0.5" b="0.5"/>
+            <specular r="0.85" g="0.62" b="0.21"/>
+            <glossiness value="2"/>
+        </material>
+        <material type="blinn" name="redish_4">
+            <ambient r="0.2" g="0.2" b="0.2"/>
+                <!-- <diffuse r="0.9" g="0.2" b="0.1"/> -->
+            <diffuse r="0.5" g="0.5" b="0.5"/>
+            <specular r="0.85" g="0.62" b="0.21"/>
+            <glossiness value="4"/>
+        </material>
+        <material type="blinn" name="redish_8">
+            <ambient r="0.2" g="0.2" b="0.2"/>
+                <!-- <diffuse r="0.9" g="0.2" b="0.1"/> -->
+            <diffuse r="0.5" g="0.5" b="0.5"/>
+            <specular r="0.85" g="0.62" b="0.21"/>
+            <glossiness value="8"/>
+        </material>
+        <material type="blinn" name="redish_16">
+            <ambient r="0.2" g="0.2" b="0.2"/>
+                <!-- <diffuse r="0.9" g="0.2" b="0.1"/> -->
+            <diffuse r="0.5" g="0.5" b="0.5"/>
+            <specular r="0.85" g="0.62" b="0.21"/>
+            <glossiness value="16"/>
+        </material>
+        <material type="blinn" name="redish_32">
+            <ambient r="0.2" g="0.2" b="0.2"/>
+                <!-- <diffuse r="0.9" g="0.2" b="0.1"/> -->
+            <diffuse r="0.5" g="0.5" b="0.5"/>
+            <specular r="0.85" g="0.62" b="0.21"/>
+            <glossiness value="32"/>
+        </material>
+        <material type="blinn" name="redish_64">
+            <ambient r="0.2" g="0.2" b="0.2"/>
+                <!-- <diffuse r="0.9" g="0.2" b="0.1"/> -->
+            <diffuse r="0.5" g="0.5" b="0.5"/>
+            <specular r="0.85" g="0.62" b="0.21"/>
+            <glossiness value="64"/>
+        </material>
+        <material type="blinn" name="redish_128">
+            <ambient r="0.2" g="0.2" b="0.2"/>
+                <!-- <diffuse r="0.9" g="0.2" b="0.1"/> -->
+            <diffuse r="0.5" g="0.5" b="0.5"/>
+            <specular r="0.85" g="0.62" b="0.21"/>
+            <glossiness value="128"/>
+        </material>
+        <material type="blinn" name="redish_256">
+            <ambient r="0.2" g="0.2" b="0.2"/>
+                <!-- <diffuse r="0.9" g="0.2" b="0.1"/> -->
+            <diffuse r="0.5" g="0.5" b="0.5"/>
+            <specular r="0.85" g="0.62" b="0.21"/>
+            <glossiness value="256"/>
+        </material>
+        <material type="blinn" name="redish_512">
+            <ambient r="0.2" g="0.2" b="0.2"/>
+                <!-- <diffuse r="0.9" g="0.2" b="0.1"/> -->
+            <diffuse r="0.5" g="0.5" b="0.5"/>
+            <specular r="0.85" g="0.62" b="0.21"/>
+            <glossiness value="0"/>
+        </material>
+    </materials>
+    <running>
+        <integrator type="blinn">
+            <spp value="1"/>
+            <depth value="1"/>
+        </integrator>
+    </running>
+</target>

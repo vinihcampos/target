@@ -4,6 +4,7 @@
 #include "Point2.h"
 #include "AmbientLight.h"
 #include "PointLight.h"
+#include "SpotLight.h"
 #include <memory>
 #include <limits>
 
@@ -42,6 +43,33 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
                 case LightType::DIRECTIONAL:
                     break;
                 case LightType::SPOT:
+                    {
+                        SpotLight * sl = dynamic_cast<SpotLight*>(l.get());
+                        Vec3 l = Vec3(Vec3(isect->p) - sl->get_position()).norm();
+                        Vec3 direction = Vec3(sl->get_point_at()) - Vec3(sl->get_position());
+
+                        double cosTheta = l.dot(direction) / (l.length() * direction.length());
+                        double delta_intensity;
+
+                        if(cosTheta < sl->get_cutoff()){
+                            continue;
+                        }else{
+                            if(cosTheta > sl->get_falloff())
+                                delta_intensity = 1;
+                            else{
+                                delta_intensity = (cosTheta - sl->get_cutoff()) / (sl->get_falloff() - sl->get_cutoff());
+                                delta_intensity = (delta_intensity * delta_intensity) * (delta_intensity * delta_intensity);
+                            }
+
+                            r = Ray(isect->p, l*(-1));
+                            if(!scene.intersect_p(r, 0.001, std::numeric_limits<double>::max())){
+                                Vec3 h = (v + l) / (v + l).length();
+                                color_result += kd * sl->get_intensity() * delta_intensity * std::max(0.0, n.dot(l)) +
+                                                ks * sl->get_intensity() * delta_intensity * std::pow(std::max(0.0, n.dot(h)), glossiness);
+                            }
+
+                        }
+                    }
                     break;
                 default:
                     break;

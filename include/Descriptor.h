@@ -38,7 +38,8 @@ namespace target{
 			static void run(const std::string & description, 
 				std::shared_ptr<Integrator> & mIntegraor, 
 				std::shared_ptr<Camera> & mCamera, 
-				std::shared_ptr<Scene> & mScene);
+				std::shared_ptr<Scene> & mScene,
+				const std::string & path_to_save);
 
 	};
 }

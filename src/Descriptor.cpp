@@ -16,11 +16,12 @@
 #include "BlinnPhongMaterial.h"
 #include "AmbientLight.h"
 #include "PointLight.h"
+#include "SpotLight.h"
 #include <map>
 #include <vector>
 
 void target::Descriptor::run(const std::string & description, std::shared_ptr<Integrator> & integrator, 
-				std::shared_ptr<Camera> & camera, std::shared_ptr<Scene> & mScene){
+				std::shared_ptr<Camera> & camera, std::shared_ptr<Scene> & mScene, const std::string & path_to_save){
 
 	std::shared_ptr<Buffer> buffer;
 	XMLDocument xmlTarget;
@@ -71,7 +72,7 @@ void target::Descriptor::run(const std::string & description, std::shared_ptr<In
 	mScene = std::shared_ptr<Scene>(new Scene(primitives, lights));
 	std::shared_ptr<Sampler> sampler = std::shared_ptr<Sampler>(new Sampler());
 	si->set_camera(camera);
-	si->set_name(settings["name"]);
+	si->set_name(path_to_save + "/" + settings["name"]);
 	si->set_sampler(sampler);
 
 	integrator = std::shared_ptr<SampleIntegrator>(si);
@@ -296,6 +297,44 @@ void target::Descriptor::processLight(std::vector<std::shared_ptr<Light>> & ligh
 			}
 		}
 		lights.push_back( std::shared_ptr<PointLight>(new PointLight(LightType::POINT, light_name, intesity,position)) );
+	}else if(!type.compare("spot")){
+		Color intesity;
+		Point3 position;
+		Point3 point_at;
+		double cutoff = 0.0;
+		double falloff = 0.0;
+		std::string elementName;
+		for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
+			elementName = pChild->Name();
+			if(!elementName.compare("Intensity") || !elementName.compare("intensity")){
+				double r = pChild->DoubleAttribute("r", 0.0);
+				double g = pChild->DoubleAttribute("g", 0.0);
+				double b = pChild->DoubleAttribute("b", 0.0);
+				intesity = Color(r,g,b);
+			}else if(!elementName.compare("Position") || !elementName.compare("position")){
+				double x = pChild->DoubleAttribute("x", 0.0);
+				double y = pChild->DoubleAttribute("y", 0.0);
+				double z = pChild->DoubleAttribute("z", 0.0);
+				position = Point3(x,y,z);
+			}else if(!elementName.compare("Point_at") || !elementName.compare("point_at")){
+				double x = pChild->DoubleAttribute("x", 0.0);
+				double y = pChild->DoubleAttribute("y", 0.0);
+				double z = pChild->DoubleAttribute("z", 0.0);
+				point_at = Point3(x,y,z);
+			}else if(!elementName.compare("Cutoff") || !elementName.compare("cutoff")){
+				cutoff = pChild->DoubleAttribute("value", 0.0);
+				cutoff = (cutoff * PI) / 180.0;
+				cutoff = std::cos(cutoff);
+			}else if(!elementName.compare("Falloff") || !elementName.compare("falloff")){
+				falloff = pChild->DoubleAttribute("value", 0.0);
+				falloff = (falloff * PI) / 180.0;
+				falloff = std::cos(falloff);
+			}else{
+				std::cerr << "The element " << elementName << " is invalid" << std::endl;
+			}
+		}
+		lights.push_back( std::shared_ptr<SpotLight>(new SpotLight(LightType::SPOT, light_name, intesity, position, 
+			point_at, cutoff, falloff)) );
 	}
 }
 

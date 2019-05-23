@@ -15,8 +15,8 @@
         <fovy value="30.0" />
         <!--<aspect value="1.33"/>-->
         <fdistance value="1" />
-        <width value="900"/>
-        <height value="450"/>
+        <width value="1920"/>
+        <height value="1080"/>
     </camera>
     <scene>
         <!-- Geometries -->
@@ -43,7 +43,12 @@
         </light>
         <light type="point" name="point_light">
             <intensity r="0.7" g="0.7" b="0.7"/>
-            <position x="0" y="1.1" z="-1"/>
+            <position x="0" y="0.5" z="-0.5"/>
+        </light>
+
+        <light type="point" name="point_light2">
+            <intensity r="0.7" g="0.7" b="0.7"/>
+            <position x="0" y="0.5" z="-2.5"/>
         </light>
     </scene>
     <materials>

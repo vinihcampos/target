@@ -32,10 +32,12 @@ namespace target{
 				float r1 = (-b + std::sqrt(delta)) / (2 * a);
 				float r2 = (-b - std::sqrt(delta)) / (2 * a);
 				float min_root = std::min(r1,r2);
+				float max_root = std::max(r1,r2);
 
 				if(surface != nullptr){
 					surface->time = min_root;
 					surface->p = r(min_root);
+					surface->p_max = r(max_root);
 					surface->n = (Vec3(center) - surface->p);
 					surface->wo = (origin - r.getDirection()) * (-1);
 				}

@@ -6,6 +6,7 @@
 #include "Ray.h"
 #include "SurfaceInteraction.h"
 #include "Primitive.h"
+#include <limits>
 #include <vector>
 #include <memory>
 
@@ -23,13 +24,24 @@ namespace target{
 	            : primitives{prs} { }
 	        
 	        bool intersect( Ray & r, SurfaceInteraction *isect ) const{
+	        	SurfaceInteraction *temp = new SurfaceInteraction();
+	        	double min_p = std::numeric_limits<double>::max();
+	        	bool hitted = false;
 	        	for(std::shared_ptr<Primitive> pr : primitives){
-	        		if(pr->intersect(r, isect)){
-	        			isect->primitive = pr;
-	        			return true;
+	        		if(pr->intersect(r, temp)){
+	        			if(temp->time < min_p){
+	        				isect->time = temp->time;
+							isect->p = temp->p;
+							isect->p_max = temp->p_max;
+							isect->n = temp->n;
+							isect->wo = temp->wo;
+	        				isect->primitive = pr;
+	        				min_p = temp->time;
+	        			}
+	        			hitted = true;
 	        		}
 	        	}
-	        	return false;
+	        	return hitted;
 	        }
 	        
 	        bool intersect_p( const Ray& r) const {

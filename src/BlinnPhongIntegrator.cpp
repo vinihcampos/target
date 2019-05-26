@@ -5,10 +5,11 @@
 #include "AmbientLight.h"
 #include "PointLight.h"
 #include "SpotLight.h"
+#include "DirectionalLight.h"
 #include <memory>
 #include <limits>
 
-target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& scene, int x, int y, Sampler& sampler ){
+target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& scene, int x, int y, Sampler& sampler, const int & depth ){
     
     SurfaceInteraction *isect = new SurfaceInteraction();
     Ray r = ray;
@@ -17,6 +18,7 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
         Color kd = fm->kd();
         Color ka = fm->ka();
         Color ks = fm->ks();
+        Color km = fm->km();
         double glossiness = fm->gloss();
         Vec3 n = isect->n.norm();
         Vec3 v = isect->wo.norm();
@@ -32,8 +34,8 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
                         PointLight * pl = dynamic_cast<PointLight*>(l.get());
                         Vec3 l = Vec3(Vec3(isect->p) - pl->get_position()).norm();
 
-                        r = Ray(isect->p, l*(-1));
-                        if(!scene.intersect_p(r, 0.001, std::numeric_limits<double>::max())){
+                        Ray shadow_r = Ray(isect->p, l*(-1));
+                        if(!scene.intersect_p(shadow_r, 0.001, std::numeric_limits<double>::max())){
                             Vec3 h = (v + l) / (v + l).length();
                             color_result += kd * pl->get_intensity() * std::max(0.0, n.dot(l)) +
                                         ks * pl->get_intensity() * std::pow(std::max(0.0, n.dot(h)), glossiness);
@@ -41,6 +43,14 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
                     }
                     break;
                 case LightType::DIRECTIONAL:
+                    {
+                        DirectionalLight * dl = dynamic_cast<DirectionalLight*>(l.get());
+                        Vec3 l = (dl->get_direction() * (-1)).norm();
+
+                        Vec3 h = (v + l) / (v + l).length();
+                        color_result += kd * dl->get_intensity() * std::max(0.0, n.dot(l)) +
+                                        ks * dl->get_intensity() * std::pow(std::max(0.0, n.dot(h)), glossiness);
+                    }
                     break;
                 case LightType::SPOT:
                     {
@@ -61,8 +71,8 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
                                 delta_intensity = (delta_intensity * delta_intensity) * (delta_intensity * delta_intensity);
                             }
 
-                            r = Ray(isect->p, l*(-1));
-                            if(!scene.intersect_p(r, 0.001, std::numeric_limits<double>::max())){
+                            Ray shadow_r = Ray(isect->p, l*(-1));
+                            if(!scene.intersect_p(shadow_r, 0.001, std::numeric_limits<double>::max())){
                                 Vec3 h = (v + l) / (v + l).length();
                                 color_result += kd * sl->get_intensity() * delta_intensity * std::max(0.0, n.dot(l)) +
                                                 ks * sl->get_intensity() * delta_intensity * std::pow(std::max(0.0, n.dot(h)), glossiness);
@@ -75,8 +85,17 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
                     break;
             }
         }
-        return (color_result * 255).clamp(0.f, 255.f);
+
+        if(!(km == Color(0,0,0)) && depth > 0){
+            //std::cout << "Ray(2): " << r.getDirection() << std::endl;
+            Vec3 v_i = r.getDirection().norm() * (-1);
+            Vec3 reflection = reflect(v_i,n).norm();
+            Ray mirror_ray = Ray(isect->p, reflection);
+            color_result += km * Li(mirror_ray, scene, x, y, sampler, 0);
+        }
+
+        return color_result;
     }else {
-        return scene.background.get()->sample(camera.get()->buffer, Point2(y,x));
+        return scene.background.get()->sample(camera.get()->buffer, Point2(y,x)) / 255;
     }
 }

@@ -1,0 +1,94 @@
+<target>
+    <settings>
+        <output name="perspective_white_spot_3_spheres"/>
+    </settings>
+    <background>
+        <color r="10" g="10" b="10"/> <!-- top left -->
+        <color r="153" g="204" b="255"/> <!-- bottom left -->
+        <color r="153" g="204" b="255"/> <!-- bottom right -->
+        <color r="10" g="10" b="10"/> <!-- top right -->
+    </background>
+    <camera type="perspective">
+        <position x="7" y="2" z="5"/> 
+        <target x="0" y="0" z="-1"/>
+        <up x="0" y="1" z="0"/>
+        <fovy value="30.0" />
+        <!--<aspect value="1.33"/>-->
+        <fdistance value="1" />
+        <width value="1920"/>
+        <height value="1080"/>
+    </camera>
+    <scene>
+        <!-- Geometries -->
+        <object type="sphere" name="sphere1" material="greenish" >             
+            <radius value="0.5"/>             
+            <center x="0" y="0" z="0"/>         
+        </object>
+        <object type="sphere" name="sphere2" material="redish"> 
+            <radius value="0.5"/>             
+            <center x="-0.86" y="0" z="-1.5"/>         
+        </object>
+        <object type="sphere" name="sphere3" material="blueish">
+            <radius value="0.5"/>
+            <center x="0.86" y="0" z="-1.5"/>
+        </object>
+        <object type="sphere" name="sphere4" material="grey">
+            <radius value="5000"/>
+            <center x="0" y="-5000.5" z="-1"/>
+        </object>
+
+        <!-- Lights -->
+        <light type="ambient" name="ambient_light">
+            <intensity r="0.1" g="0.1" b="0.1"/>
+        </light>
+        <!--<light type="point" name="point_light">
+            <intensity r="0.7" g="0.7" b="0.7"/>
+            <position x="0" y="0.5" z="-0.5"/>
+        </light>
+
+        <light type="point" name="point_light2">
+            <intensity r="0.7" g="0.7" b="0.7"/>
+            <position x="0" y="0.5" z="-2.5"/>
+        </light>-->
+        <light type="spot" name="spot1">
+            <intensity r="0.9" g="0.9" b="0.9"/>
+            <position x="-1" y="3" z="2.5"/>
+            <point_at x="0" y="0" z="-0.5"/>
+            <cutoff value="35"/>
+            <falloff value="10"/>
+        </light>
+    </scene>
+    <materials>
+        <!-- Library of materials -->
+        <material type="blinn" name="redish">
+            <ambient r="0.1" g="0.1" b="0.1"/>
+            <diffuse r="0.9" g="0.2" b="0.1"/>
+            <specular r="0.8" g="0.8" b="0.8"/>
+            <glossiness value="64"/>
+        </material>
+        <material type="blinn" name="greenish">
+            <ambient r="0.1" g="0.1" b="0.1"/>
+            <diffuse r="0.2" g="0.9" b="0.2"/>
+            <specular r="0.8" g="0.8" b="0.8"/>
+            <glossiness value="256"/>
+        </material>
+        <material type="blinn" name="blueish">
+            <ambient r="0.1" g="0.1" b="0.1"/>
+            <diffuse r="0.1" g="0.2" b="0.9"/>
+            <specular r="0.8" g="0.8" b="0.8"/>
+            <glossiness value="20"/>
+        </material>
+        <material type="blinn" name="grey">
+            <ambient r="0.1" g="0.1" b="0.1"/>
+            <diffuse r="0.8" g="0.8" b="0.8"/>
+            <specular r="0" g="0" b="0"/>
+            <glossiness value="8"/>
+        </material>
+    </materials>
+    <running>
+        <integrator type="blinn">
+            <spp value="1"/>
+            <depth value="1"/>
+        </integrator>
+    </running>
+</target>

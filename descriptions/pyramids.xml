@@ -1,0 +1,107 @@
+<target>
+    <settings>
+        <output name="pyramids"/>
+    </settings>
+    <!--- The Camera -->
+    <camera type="orthographic">
+        <!--- The camera frame -->
+        <position x="1" y="0" z="1"/> <!--- located at the origin -->
+        <target x="0" y="0" z="0"/>  <!--- looking down the -Z axis -->
+        <up x="0" y="1" z="0"/>       <!--- the camera's up vector -->
+        <vpdim l="-4" r="4" b="-2.57" t="2.57" /> 
+        <!--- Specific parameters for perspective projection -->
+        <!--<fovy value="24.0" />         <!--- The vertical field of view -->
+        <!--<fdistance value="1" />       <!--- The focal distance  -->
+        <!--- Retina/image dimensions -->
+        <width value="700"/>
+        <height value="450"/>
+    </camera>
+    <!--- The Background -->
+    <background> <!-- This defines an interpolated background -->
+        <color r="10"   g="10"    b="80"/> <!-- top left     -->
+        <color r="153"  g="204"   b="255"/> <!-- bottom left  -->
+        <color r="153"  g="204"   b="255"/> <!-- bottom right  -->
+        <color r="10"   g="10"    b="80"/> <!-- top right    -->
+    </background>
+    <!--- The Scene -->
+    <scene>
+        <!-- Front-left pyramid -->
+        <object type="sphere" name="one" material="red">
+            <radius value="0.5"/>
+            <center x="0" y=".5" z="0.5"/>
+        </object>
+        <object type="sphere" name="two" material="red_1">
+            <radius value="0.5"/>
+            <center x="0" y="0" z="0"/>
+        </object>
+        <object type="sphere" name="three" material= "red_2">
+            <radius value="0.5"/>
+            <center x="0" y="0" z="1"/>
+        </object>
+        <!--
+        <object type="sphere" name="spher1c" material="red_3">
+            <radius value="0.5"/>
+            <center x="-2" y="0" z="2"/>
+        </object>-->
+
+        <!-- Ground -->
+        <object type="sphere" name="sphere4" material="grey">
+            <radius value="5000"/>
+            <center x="0" y="-5000.5" z="-1"/>
+        </object>
+
+        <!-- Lights -->
+        <light type="ambient" name="ambient_light">
+            <intensity r="0.1" g="0.1" b="0.1"/>
+        </light>
+        <light type="directional" name="point_light">
+            <intensity r="0.9" g="0.9" b="0.9"/>
+            <direction x="1" y="0.5" z="1"/>
+        </light>
+        <light type="directional" name="point_light2">
+            <intensity r="0.4" g="0.4" b="0.4"/>
+            <direction x="-0.3" y="0.3" z="1"/>
+        </light>
+    </scene>
+    <materials>
+        <!--- Library of materials -->
+        <material type="blinn" name="red">
+            <ambient r="0.6" g="0.6" b="0.6"/>
+            <diffuse r="1" g="0" b="0"/>
+            <specular r="0.8" g="0.8" b="0.8"/>
+            <glossiness value="64"/>
+        </material>
+        <material type="blinn" name="red_1">
+            <ambient r="0.6" g="0.6" b="0.6"/>
+            <diffuse r="1" g="0.2" b="0.2"/>
+            <specular r="0.8" g="0.8" b="0.8"/>
+            <glossiness value="64"/>
+        </material>
+        <material type="blinn" name="red_2">
+            <ambient r="0.6" g="0.6" b="0.6"/>
+            <diffuse r="1" g="0.4" b="0.4"/>
+            <specular r="0.8" g="0.8" b="0.8"/>
+            <glossiness value="64"/>
+        </material>
+        <material type="blinn" name="red_3">
+            <ambient r="0.6" g="0.6" b="0.6"/>
+            <diffuse r="1" g="0.6" b="0.6"/>
+            <specular r="0.8" g="0.8" b="0.8"/>
+            <glossiness value="64"/>
+        </material>
+        <material type="blinn" name="grey">
+            <ambient r="0.4" g="0.4" b="0.4"/>
+            <diffuse r="1.0" g="1.0" b="1.0"/>
+            <specular r="0" g="0" b="0"/>
+            <mirror r="0.2" g="0.2" b="0.2"/>
+            <glossiness value="0"/>
+        </material>
+    </materials>
+    <!--- Running setup -->
+    <running>
+        <integrator type="blinn">
+            <spp value="1"/>
+            <depth value="1"/>
+        </integrator>
+    </running>
+</target>

@@ -17,6 +17,7 @@
 #include "AmbientLight.h"
 #include "PointLight.h"
 #include "SpotLight.h"
+#include "DirectionalLight.h"
 #include <map>
 #include <vector>
 
@@ -297,6 +298,27 @@ void target::Descriptor::processLight(std::vector<std::shared_ptr<Light>> & ligh
 			}
 		}
 		lights.push_back( std::shared_ptr<PointLight>(new PointLight(LightType::POINT, light_name, intesity,position)) );
+	}else if(!type.compare("directional")){
+		Color intesity;
+		Vec3 direction;
+		std::string elementName;
+		for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
+			elementName = pChild->Name();
+			if(!elementName.compare("Intensity") || !elementName.compare("intensity")){
+				double r = pChild->DoubleAttribute("r", 0.0);
+				double g = pChild->DoubleAttribute("g", 0.0);
+				double b = pChild->DoubleAttribute("b", 0.0);
+				intesity = Color(r,g,b);
+			}else if(!elementName.compare("Direction") || !elementName.compare("direction")){
+				double x = pChild->DoubleAttribute("x", 0.0);
+				double y = pChild->DoubleAttribute("y", 0.0);
+				double z = pChild->DoubleAttribute("z", 0.0);
+				direction = Vec3(x,y,z);
+			}else{
+				std::cerr << "The element " << elementName << " is invalid" << std::endl;
+			}
+		}
+		lights.push_back( std::shared_ptr<DirectionalLight>(new DirectionalLight(LightType::DIRECTIONAL, light_name, intesity, direction)) );
 	}else if(!type.compare("spot")){
 		Color intesity;
 		Point3 position;
@@ -404,7 +426,7 @@ target::Color target::Descriptor::processFlatMaterial(XMLElement *& element){
 
 std::shared_ptr<target::Material> target::Descriptor::processBlinnMaterial(XMLElement *& element){
 	std::string elementName;
-	Color difuse, ambient, specular;
+	Color difuse, ambient, specular, mirror;
 	double glossiness;
 
 	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
@@ -427,12 +449,18 @@ std::shared_ptr<target::Material> target::Descriptor::processBlinnMaterial(XMLEl
 			double b = pChild->DoubleAttribute("b", 0.0);
 
 			specular = Color(r,g,b);
+		}else if(!elementName.compare("Mirror") || !elementName.compare("mirror")){
+			double r = pChild->DoubleAttribute("r", 0.0);
+			double g = pChild->DoubleAttribute("g", 0.0);
+			double b = pChild->DoubleAttribute("b", 0.0);
+
+			mirror = Color(r,g,b);
 		}else if(!elementName.compare("Glossiness") || !elementName.compare("glossiness")){
 			glossiness = pChild->DoubleAttribute("value", 0);
 		}
 	}
 
-	return std::shared_ptr<Material>(new BlinnPhongMaterial(difuse, ambient, specular, glossiness));
+	return std::shared_ptr<Material>(new BlinnPhongMaterial(difuse, ambient, specular, glossiness, mirror));
 }
 
 void target::Descriptor::processSetup(std::shared_ptr<SampleIntegrator> & integrator, XMLElement *& element){

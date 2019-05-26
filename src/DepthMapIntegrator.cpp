@@ -5,7 +5,7 @@
 #include "Vec3.h"
 #include <cmath>
 
-target::Color target::DepthMapIntegrator::Li( const Ray& ray, const Scene& scene, int x, int y, Sampler& sampler ){
+target::Color target::DepthMapIntegrator::Li( const Ray& ray, const Scene& scene, int x, int y, Sampler& sampler, const int & depth ){
 
     SurfaceInteraction *isect = new SurfaceInteraction();
     Ray r = ray;
@@ -19,10 +19,10 @@ target::Color target::DepthMapIntegrator::Li( const Ray& ray, const Scene& scene
         Color c( interpolation * (farm->kd().r()-nearm->kd().r()) + nearm->kd().r(),
         		 interpolation * (farm->kd().g()-nearm->kd().g()) + nearm->kd().g(),
         		 interpolation * (farm->kd().b()-nearm->kd().b()) + nearm->kd().b());
-        return c;
+        return c / 255;
     }else {
         FlatMaterial * farm  = static_cast<FlatMaterial*>(far.get());
-        return farm->kd();
+        return farm->kd() / 255;
     }
 }
 

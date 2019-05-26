@@ -21,6 +21,7 @@ namespace target{
 			SurfaceInteraction(){}
 
 			Point3 p; // Contact point.
+			Point3 p_max; // Other contact point.
 			
 			Vec3 n; // The surface normal.
 			

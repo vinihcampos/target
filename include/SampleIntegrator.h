@@ -26,7 +26,7 @@ namespace target{
             inline void set_sampler(std::shared_ptr<Sampler> & sampler_){ sampler = sampler_; }
 	        void render( const Scene& scene );
 			virtual void preprocess( const Scene& scene ){}
-			virtual Color Li( const Ray& ray, const Scene& scene, int x, int y, Sampler& sampler ) = 0;
+			virtual Color Li( const Ray& ray, const Scene& scene, int x, int y, Sampler& sampler, const int & depth = 0 ) = 0;
 		
 	};
 }

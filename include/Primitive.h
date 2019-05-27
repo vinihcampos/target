@@ -4,6 +4,7 @@
 #include "Ray.h"
 #include "SurfaceInteraction.h"
 #include "Material.h"
+#include "Bounds3.h"
 #include <string>
 
 namespace target{
@@ -13,6 +14,7 @@ namespace target{
 		protected:
 			std::shared_ptr<Material> material;
 			std::string name;
+			Bounds3 box;
 
 		public:
 			Primitive(const std::string & name) : name{name}{}
@@ -22,6 +24,7 @@ namespace target{
 			Material * get_material(void) { return material.get(); }
 			void set_material(std::shared_ptr<Material> & material){ this->material = material; }
 			inline std::string getName(){ return name; }
+			inline Bounds3 get_bounding_box(){ return box; }
 	};
 	typedef Primitive Shape;
 }

@@ -15,7 +15,9 @@ namespace target{
 
 		public:
 			Sphere(const Vec3 & center, const float & radius, const std::string & name ) 
-				: Shape(name), center{center}, radius{radius}{}
+				: Shape(name), center{center}, radius{radius}{
+					this->box = Bounds3( this->center - radius, this->center + radius );
+				}
 			inline bool intersect( Ray & r, SurfaceInteraction * surface = nullptr) const { 
 				
 				Vec3 origin = Vec3(r.getOrigin());

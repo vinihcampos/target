@@ -9,6 +9,20 @@
 #include <memory>
 #include <limits>
 
+void target::BlinnPhongIntegrator::preprocess( const Scene& scene ){
+    if(scene.primitives.empty())
+        return;
+
+    big_box = scene.primitives[0]->get_bounding_box();
+
+    for(std::shared_ptr<Primitive> pr : scene.primitives){
+        big_box = Union(big_box, pr->get_bounding_box());
+    }
+
+    worldRadius = big_box.diag().length() / 2;
+}
+
+
 target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& scene, int x, int y, Sampler& sampler, const int & depth ){
     
     SurfaceInteraction *isect = new SurfaceInteraction();
@@ -46,10 +60,15 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
                     {
                         DirectionalLight * dl = dynamic_cast<DirectionalLight*>(l.get());
                         Vec3 l = (dl->get_direction() * (-1)).norm();
+                        Point3 pOut = dl->get_direction() * (2 * worldRadius ) + isect->p; 
+                        Vec3 shadow_l = Vec3(Vec3(isect->p) - pOut).norm();
 
-                        Vec3 h = (v + l) / (v + l).length();
-                        color_result += kd * dl->get_intensity() * std::max(0.0, n.dot(l)) +
-                                        ks * dl->get_intensity() * std::pow(std::max(0.0, n.dot(h)), glossiness);
+                        Ray shadow_r = Ray(isect->p, shadow_l*(-1));
+                        if(!scene.intersect_p(shadow_r, 0.001, 2*worldRadius)){
+                            Vec3 h = (v + l) / (v + l).length();
+                            color_result += kd * dl->get_intensity() * std::max(0.0, n.dot(l)) +
+                                            ks * dl->get_intensity() * std::pow(std::max(0.0, n.dot(h)), glossiness);
+                        }
                     }
                     break;
                 case LightType::SPOT:
@@ -88,7 +107,7 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
 
         if(!(km == Color(0,0,0)) && (depth > 0)){
             //std::cout << "Ray(2): " << r.getDirection() << std::endl;
-            Vec3 v_i = r.getDirection() * (-1);
+            Vec3 v_i = r.getDirection().norm() * (-1);
             Vec3 reflection = reflect(v_i,n).norm();
             Ray mirror_ray = Ray(isect->p, reflection);
             color_result += km * Li(mirror_ray, scene, x, y, sampler, 0);

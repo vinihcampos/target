@@ -12,8 +12,8 @@
         <fovy value="24.0" />         <!--- The vertical field of view -->
         <fdistance value="1" />       <!--- The focal distance  -->
         <!--- Retina/image dimensions -->
-        <width value="1400"/>
-        <height value="900"/>
+        <width value="700"/>
+        <height value="450"/>
     </camera>
     <!--- The Background -->
     <background>

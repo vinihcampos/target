@@ -39,10 +39,12 @@ namespace target{
 			inline Vec3 operator+(const Vec3 & p){ return Vec3( point.x+p.x(), point.y+p.y(), point.z+p.z() ); }
 			inline void operator+=(const Vec3 & p){ point.x += p.x(); point.y += p.y(); point.z += p.z(); }
 			inline Point3 operator+(const Point3 p){ return Point3( point.x+p.x, point.y+p.y, point.z+p.z ); }
+			inline Vec3 operator+(const double v){ return Vec3( point.x+v, point.y+v, point.z+v ); }
 
 			inline Vec3 operator-(const Vec3 & p){ return Vec3( point.x-p.x(), point.y-p.y(), point.z-p.z() ); }
 			inline void operator-=(const Vec3 & p){ point.x -= p.x(); point.y -= p.y(); point.z -= p.z(); }
 			inline Point3 operator-(const Point3 p){ return Point3( point.x-p.x, point.y-p.y, point.z-p.z ); }
+			inline Vec3 operator-(const double v){ return Vec3( point.x-v, point.y-v, point.z-v ); }
 
 			inline Vec3 operator*(const Vec3 & p){ return Vec3( point.x*p.x(), point.y*p.y(), point.z*p.z() ); }
 			inline void operator*=(const Vec3 & p){ point.x *= p.x(); point.y *= p.y(); point.z *= p.z(); }

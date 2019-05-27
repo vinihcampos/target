@@ -5,6 +5,7 @@
 #include "Point3.h"
 #include "Point2.h"
 #include "Vec3.h"
+#include <limits>
 #include <memory>
 
 namespace target{
@@ -27,7 +28,7 @@ namespace target{
 			
 			Vec3 wo; // Outgoing direction of light, which is -ray.
 			
-			float time; // Time of contact.
+			float time = std::numeric_limits<double>::max(); // Time of contact.
 			
 			Point2 uv; // Parametric coordinate (u,v) of the hit surface.
 			

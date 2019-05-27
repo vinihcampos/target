@@ -1,6 +1,6 @@
 <target>
     <settings>
-        <output name="directional_light_reference_mirror_02"/>
+        <output name="perspective_directional_light_reference_mirror_02"/>
     </settings>
     <!--- The Camera -->
     <camera type="perspective">
@@ -12,15 +12,15 @@
         <fovy value="24.0" />         <!--- The vertical field of view -->
         <fdistance value="1" />       <!--- The focal distance  -->
         <!--- Retina/image dimensions -->
-        <width value="2800"/>
-        <height value="1800"/>
+        <width value="1400"/>
+        <height value="900"/>
     </camera>
     <!--- The Background -->
-    <background> <!-- This defines an interpolated background -->
-        <color r="10"   g="10"    b="80"/> <!-- top left     -->
-        <color r="153"  g="204"   b="255"/> <!-- bottom left  -->
-        <color r="153"  g="204"   b="255"/> <!-- bottom right  -->
-        <color r="10"   g="10"    b="80"/> <!-- top right    -->
+    <background>
+        <color r="18" g="10" b="143"/> <!-- top left -->
+        <color r="153" g="204" b="255"/> <!-- bottom left -->
+        <color r="153" g="204" b="255"/> <!-- bottom right -->
+        <color r="18" g="10" b="143"/> <!-- top right -->
     </background>
     <!--- The Scene -->
     <scene>

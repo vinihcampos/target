@@ -16,11 +16,11 @@
         <height value="450"/>
     </camera>
     <!--- The Background -->
-    <background> <!-- This defines an interpolated background -->
-        <color r="10"   g="10"    b="80"/> <!-- top left     -->
-        <color r="153"  g="204"   b="255"/> <!-- bottom left  -->
-        <color r="153"  g="204"   b="255"/> <!-- bottom right  -->
-        <color r="10"   g="10"    b="80"/> <!-- top right    -->
+    <background>
+        <color r="18" g="10" b="143"/> <!-- top left -->
+        <color r="153" g="204" b="255"/> <!-- bottom left -->
+        <color r="153" g="204" b="255"/> <!-- bottom right -->
+        <color r="18" g="10" b="143"/> <!-- top right -->
     </background>
     <!--- The Scene -->
     <scene>

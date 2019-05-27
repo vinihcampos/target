@@ -35,7 +35,7 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
                         Vec3 l = Vec3(Vec3(isect->p) - pl->get_position()).norm();
 
                         Ray shadow_r = Ray(isect->p, l*(-1));
-                        if(!scene.intersect_p(shadow_r, 0.001, std::numeric_limits<double>::max())){
+                        if(!scene.intersect_p(shadow_r, 0.001, 1)){
                             Vec3 h = (v + l) / (v + l).length();
                             color_result += kd * pl->get_intensity() * std::max(0.0, n.dot(l)) +
                                         ks * pl->get_intensity() * std::pow(std::max(0.0, n.dot(h)), glossiness);
@@ -72,7 +72,7 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
                             }
 
                             Ray shadow_r = Ray(isect->p, l*(-1));
-                            if(!scene.intersect_p(shadow_r, 0.001, std::numeric_limits<double>::max())){
+                            if(!scene.intersect_p(shadow_r, 0.001, 1)){
                                 Vec3 h = (v + l) / (v + l).length();
                                 color_result += kd * sl->get_intensity() * delta_intensity * std::max(0.0, n.dot(l)) +
                                                 ks * sl->get_intensity() * delta_intensity * std::pow(std::max(0.0, n.dot(h)), glossiness);
@@ -86,9 +86,9 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
             }
         }
 
-        if(!(km == Color(0,0,0)) && depth > 0){
+        if(!(km == Color(0,0,0)) && (depth > 0)){
             //std::cout << "Ray(2): " << r.getDirection() << std::endl;
-            Vec3 v_i = r.getDirection().norm() * (-1);
+            Vec3 v_i = r.getDirection() * (-1);
             Vec3 reflection = reflect(v_i,n).norm();
             Ray mirror_ray = Ray(isect->p, reflection);
             color_result += km * Li(mirror_ray, scene, x, y, sampler, 0);

@@ -107,12 +107,12 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
             }
         }
 
-        if(!(km == Color(0,0,0)) && (depth > 0)){
+        /*if(!(km == Color(0,0,0)) && (depth > 0)){
             Vec3 v_i = ray.getDirection().norm();
             Vec3 reflection = v_i - n * v_i.dot(n.norm()) * 2.0;
             Ray mirror_ray = Ray(isect->p, reflection);
             color_result += km * Li(mirror_ray, scene, sampler, depth - 1);
-        }
+        }*/
 
         delete isect;
         return color_result;

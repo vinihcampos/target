@@ -8,8 +8,6 @@
 
 namespace target{
 
-	const double PI = 3.14159265;
-
 	class PerspectiveCamera : public Camera{
 		private:
 			double fovy, fd, aspect;
@@ -21,7 +19,7 @@ namespace target{
 			  std::tan((fovy/2.0)*(PI/180.0)) * fd * aspect, 
 			  std::tan((fovy/2.0)*(PI/180.0)) * fd * (-1), 
 			  std::tan((fovy/2.0)*(PI/180.0)) * fd){}
-			Ray generate_ray(int x, int y) override;	
+			Ray generate_ray(int y, int x) override;
 	};
 }
 

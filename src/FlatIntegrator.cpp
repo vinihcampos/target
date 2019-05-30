@@ -5,7 +5,7 @@
 #include "SurfaceInteraction.h"
 #include <memory>
 
-target::Color target::FlatIntegrator::Li( const Ray& ray, const Scene& scene, int x, int y, Sampler& sampler, const int & depth ){
+target::Color target::FlatIntegrator::Li( const Ray& ray, const Scene& scene, Sampler& sampler, const int & depth ){
     
     SurfaceInteraction *isect = new SurfaceInteraction();
     Ray r = ray;
@@ -13,6 +13,10 @@ target::Color target::FlatIntegrator::Li( const Ray& ray, const Scene& scene, in
         FlatMaterial * fm = static_cast<FlatMaterial*>(isect->primitive->get_material());
         return fm->kd() / 255;
     }else {
-        return scene.background.get()->sample(camera.get()->buffer, Point2(y,x)) / 255;
+        double u = 0.0;
+        double v = 0.0;
+        camera->get_uv(r.getDirection(),u,v);
+        Point2 p = camera->generate_point(u,v);
+        return scene.background.get()->sample(camera.get()->buffer, Point2(p.x,p.y)) / 255;
     }
 }

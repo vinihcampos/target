@@ -69,7 +69,7 @@ namespace target{
 
 			inline Vec3 norm(){
 				double root = length();
-				return (*this) / root;
+				return Vec3(point) * (1 / root);
 			}
 
 			inline double length() const{

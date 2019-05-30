@@ -9,7 +9,7 @@
         <color r="10" g="10" b="10"/> <!-- top right -->
     </background>
     <camera type="perspective">
-        <position x="-1" y="4" z="15"/> 
+        <position x="0" y="10" z="30"/> 
         <target x="0" y="0" z="0"/>
         <up x="0" y="1" z="0"/>
         <fovy value="30.0" />

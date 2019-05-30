@@ -23,7 +23,7 @@ void target::BlinnPhongIntegrator::preprocess( const Scene& scene ){
 }
 
 
-target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& scene, int x, int y, Sampler& sampler, const int & depth ){
+target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& scene, Sampler& sampler, const int & depth ){
     
     SurfaceInteraction *isect = new SurfaceInteraction();
     Ray r = ray;
@@ -46,10 +46,11 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
                 case LightType::POINT:
                     {
                         PointLight * pl = dynamic_cast<PointLight*>(l.get());
-                        Vec3 l = Vec3(Vec3(isect->p) - pl->get_position()).norm();
+                        Vec3 l = Vec3(Vec3(pl->get_position()) - isect->p);
 
-                        Ray shadow_r = Ray(isect->p, l*(-1));
+                        Ray shadow_r = Ray(isect->p, l);
                         if(!scene.intersect_p(shadow_r, 0.001, 1)){
+                            l = l.norm();
                             Vec3 h = (v + l) / (v + l).length();
                             color_result += kd * pl->get_intensity() * std::max(0.0, n.dot(l)) +
                                         ks * pl->get_intensity() * std::pow(std::max(0.0, n.dot(h)), glossiness);
@@ -59,12 +60,12 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
                 case LightType::DIRECTIONAL:
                     {
                         DirectionalLight * dl = dynamic_cast<DirectionalLight*>(l.get());
-                        Vec3 l = (dl->get_direction() * (-1)).norm();
-                        Point3 pOut = dl->get_direction() * (2 * worldRadius ) + isect->p; 
-                        Vec3 shadow_l = Vec3(Vec3(isect->p) - pOut).norm();
+                        Vec3 l = (dl->get_direction()).norm();
+                        Point3 pOut = dl->get_direction() * (2 * worldRadius) + isect->p; 
+                        Vec3 shadow_l = Vec3(pOut) - Vec3(isect->p);
 
-                        Ray shadow_r = Ray(isect->p, shadow_l*(-1));
-                        if(!scene.intersect_p(shadow_r, 0.001, 2*worldRadius)){
+                        Ray shadow_r = Ray(isect->p, shadow_l);
+                        if(!scene.intersect_p(shadow_r, 0.00001, 1)){
                             Vec3 h = (v + l) / (v + l).length();
                             color_result += kd * dl->get_intensity() * std::max(0.0, n.dot(l)) +
                                             ks * dl->get_intensity() * std::pow(std::max(0.0, n.dot(h)), glossiness);
@@ -74,8 +75,8 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
                 case LightType::SPOT:
                     {
                         SpotLight * sl = dynamic_cast<SpotLight*>(l.get());
-                        Vec3 l = Vec3(Vec3(isect->p) - sl->get_position()).norm();
-                        Vec3 direction = Vec3(sl->get_point_at()) - Vec3(sl->get_position());
+                        Vec3 l = Vec3(Vec3(sl->get_position()) - isect->p);
+                        Vec3 direction = Vec3(sl->get_position()) - Vec3(sl->get_point_at()) ;
 
                         double cosTheta = l.dot(direction) / (l.length() * direction.length());
                         double delta_intensity;
@@ -90,8 +91,9 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
                                 delta_intensity = (delta_intensity * delta_intensity) * (delta_intensity * delta_intensity);
                             }
 
-                            Ray shadow_r = Ray(isect->p, l*(-1));
+                            Ray shadow_r = Ray(isect->p, l);
                             if(!scene.intersect_p(shadow_r, 0.001, 1)){
+                                l = l.norm();
                                 Vec3 h = (v + l) / (v + l).length();
                                 color_result += kd * sl->get_intensity() * delta_intensity * std::max(0.0, n.dot(l)) +
                                                 ks * sl->get_intensity() * delta_intensity * std::pow(std::max(0.0, n.dot(h)), glossiness);
@@ -106,15 +108,21 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
         }
 
         if(!(km == Color(0,0,0)) && (depth > 0)){
-            //std::cout << "Ray(2): " << r.getDirection() << std::endl;
-            Vec3 v_i = r.getDirection().norm() * (-1);
-            Vec3 reflection = reflect(v_i,n).norm();
+            Vec3 v_i = ray.getDirection().norm();
+            Vec3 reflection = v_i - n * v_i.dot(n.norm()) * 2.0;
             Ray mirror_ray = Ray(isect->p, reflection);
-            color_result += km * Li(mirror_ray, scene, x, y, sampler, 0);
+            color_result += km * Li(mirror_ray, scene, sampler, depth - 1);
         }
 
+        delete isect;
         return color_result;
     }else {
-        return scene.background.get()->sample(camera.get()->buffer, Point2(y,x)) / 255;
+        double u = 0.0;
+        double v = 0.0;
+        camera->get_uv(r.getDirection(),u,v);
+        Point2 p = camera->generate_point(u,v);
+        
+        delete isect;
+        return scene.background.get()->sample(camera.get()->buffer, Point2(p.x,p.y)) / 255;
     }
 }

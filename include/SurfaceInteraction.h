@@ -24,11 +24,12 @@ namespace target{
 			Point3 p; // Contact point.
 			Point3 p_max; // Other contact point.
 			
+			Vec3 first_n;
 			Vec3 n; // The surface normal.
 			
 			Vec3 wo; // Outgoing direction of light, which is -ray.
 			
-			float time = std::numeric_limits<double>::max(); // Time of contact.
+			double time = std::numeric_limits<double>::max(); // Time of contact.
 			
 			Point2 uv; // Parametric coordinate (u,v) of the hit surface.
 			

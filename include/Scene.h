@@ -24,18 +24,33 @@ namespace target{
 	            : primitives{prs} { }
 	        
 	        bool intersect( Ray & r, SurfaceInteraction *isect ) const{
-	        	double min_p = std::numeric_limits<double>::max();
 	        	bool hitted = false;
 	        	for(std::shared_ptr<Primitive> pr : primitives){
-	        		if(pr->intersect(r, isect)){
-	        			if(isect->time < min_p){
+	        		SurfaceInteraction *temp = new SurfaceInteraction();
+	        		if(pr->intersect(r, temp)){
+	        			if(temp->time < isect->time){
 	        				isect->primitive = pr;
-	        				min_p = isect->time;
+	        				isect->time = temp->time;
+							isect->p = temp->p;
+							isect->p_max = temp->p_max;
+							isect->n = temp->n;
+							isect->wo = temp->wo;
 	        			}
 	        			hitted = true;
 	        		}
+	        		delete temp;
 	        	}
 	        	return hitted;
+	        }
+
+	        bool intersect_( Ray & r, SurfaceInteraction *isect ) const{
+	        	for(std::shared_ptr<Primitive> pr : primitives){
+	        		if(pr->intersect(r, isect)){
+	        			isect->primitive = pr;
+	        			return true;
+	        		}
+	        	}
+	        	return false;
 	        }
 	        
 	        bool intersect_p( const Ray& r) const {

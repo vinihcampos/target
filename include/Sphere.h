@@ -37,13 +37,11 @@ namespace target{
 				float max_root = std::max(r1,r2);
 
 				if(surface != nullptr){
-					if(surface->time > min_root){
-						surface->time = min_root;
-						surface->p = r(min_root);
-						surface->p_max = r(max_root);
-						surface->n = (Vec3(center) - surface->p);
-						surface->wo = (origin - r.getDirection()) * (-1);	
-					}					
+					surface->time = min_root;
+					surface->p = r(min_root);
+					surface->p_max = r(max_root);
+					surface->n = (Vec3(surface->p) - center) * 2.0;
+					surface->wo = (r.getDirection() - origin) * (-1);					
 				}
 
 				return true; 

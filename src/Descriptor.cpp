@@ -18,6 +18,7 @@
 #include "PointLight.h"
 #include "SpotLight.h"
 #include "DirectionalLight.h"
+#include "Triangle.h"
 #include <map>
 #include <vector>
 

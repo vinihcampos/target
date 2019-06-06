@@ -96,6 +96,8 @@ namespace target{
  			}
 	};
 
+	inline Vec3 operator/(const double v, Vec3& vec){ return vec / v; }
+
 	typedef Vec3 Color;
 
 	/* Predefined colors*/

@@ -12,6 +12,7 @@
 #include "Scene.h"
 #include "Material.h"
 #include "Light.h"
+#include "Triangle.h"
 #include <string>
 #include <map>
 #include <vector>
@@ -33,6 +34,7 @@ namespace target{
 			static std::shared_ptr<target::Material> processBlinnMaterial(XMLElement *& element);
 			static void processSetup(std::shared_ptr<SampleIntegrator> & integrator, XMLElement *& element);
 			static std::shared_ptr<target::Sphere> processSphere(XMLElement *& element);
+			static std::vector< std::shared_ptr<target::Triangle> > processTriangle(XMLElement *& element);
 
 		public:
 			static void run(const std::string & description, 

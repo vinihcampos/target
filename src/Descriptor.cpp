@@ -19,6 +19,7 @@
 #include "SpotLight.h"
 #include "DirectionalLight.h"
 #include "Triangle.h"
+#include "cyTriMesh.h"
 #include <sstream>
 #include <map>
 #include <vector>
@@ -413,6 +414,23 @@ std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processTria
 	std::vector<int> indices;
 	double v;
 
+	bool clk = true;
+
+	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
+		elementName = pChild->Name();
+		if(!elementName.compare("clockwise") || !elementName.compare("Clockwise")){
+			clk = pChild->BoolAttribute("value", true);
+		}
+	}
+
+	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
+		elementName = pChild->Name();
+		if(!elementName.compare("Filename") || !elementName.compare("filename")){
+			std::string filename_obj = pChild->Attribute("value");
+			return processMeshObject(filename_obj, name, clk);
+		}
+	}
+
 	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
 		elementName = pChild->Name();
 		if(!elementName.compare("Ntriangles") || !elementName.compare("ntriangles")){
@@ -442,21 +460,74 @@ std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processTria
 				normals.push_back(n);
 			}
 		}else if(!elementName.compare("Uv") || !elementName.compare("uv")){
-			
+			continue;
+		}else if(!elementName.compare("clockwise") || !elementName.compare("Clockwise")){
+			continue;
 		}else{
 			std::cerr << "The element " << elementName << " is invalid" << std::endl;
 		}
 	}
 
 	std::shared_ptr<TriangleMesh> mesh = std::shared_ptr<TriangleMesh>(new TriangleMesh(indices, vertices, normals));
-
 	std::vector<std::shared_ptr<Triangle> > triangles;
+
 	for(int i = 0; i < n_triangles; ++i){
 		std::string name_tri = name + std::to_string(i);
-		triangles.push_back( std::shared_ptr<Triangle>(new Triangle(name, mesh, i)) );
+		triangles.push_back( std::shared_ptr<Triangle>(new Triangle(name, mesh, i, clk)) );
 	}
 
 	return triangles;
+}
+
+std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processMeshObject(const std::string & filename, const std::string & name, const bool & clk){
+	cy::TriMesh cyMesh;
+	if(cyMesh.LoadFromFileObj(filename.c_str(), false)){
+
+		int n_triangles = 0;
+		int n_vertices = 0;
+		std::vector<int> indices;
+		std::vector<Point3> vertices;
+		std::vector<Vec3> normals;
+
+		n_triangles = cyMesh.NF();
+		n_vertices = cyMesh.NV();
+
+		// Getting the indices
+		for(int i = 0; i < cyMesh.NF(); ++i){
+			cy::TriMesh::TriFace f = cyMesh.F(i);
+			for(int j = 0; j < 3; ++j) 
+				indices.push_back(f.v[j]);
+		}
+
+		// Getting the vertices
+		for(int i = 0; i < cyMesh.NV(); ++i){
+			cy::Point3f p = cyMesh.V(i);
+			vertices.push_back( Point3( p[0], p[1], p[2] ) );
+		}
+
+		// Getting the normals
+		if((cyMesh.NVN() != cyMesh.NV()) || !cyMesh.HasNormals()){
+			cyMesh.ComputeNormals(clk);
+		}
+
+		for(int i = 0; i < cyMesh.NVN(); ++i){
+			cy::Point3f p = cyMesh.VN(i);
+			normals.push_back( Vec3(p[0], p[1], p[2]) );
+		}
+
+		std::shared_ptr<TriangleMesh> mesh = std::shared_ptr<TriangleMesh>(new TriangleMesh(indices, vertices, normals));
+		std::vector<std::shared_ptr<Triangle> > triangles;
+
+		for(int i = 0; i < n_triangles; ++i){
+			std::string name_tri = name + std::to_string(i);
+			triangles.push_back( std::shared_ptr<Triangle>(new Triangle(name, mesh, i, clk)) );
+		}
+
+		return triangles;
+
+	}else{
+		throw "Fail to load object!\n";
+	}
 }
 
 void target::Descriptor::processMaterials(std::map<std::string, std::shared_ptr<Material>> & materials, XMLElement *& element){

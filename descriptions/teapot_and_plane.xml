@@ -1,0 +1,77 @@
+<target>
+    <settings>
+        <output name="teapot_and_plane"/>
+    </settings>
+    <background>
+        <color r="10" g="10" b="10"/> <!-- top left -->
+        <color r="153" g="204" b="255"/> <!-- bottom left -->
+        <color r="153" g="204" b="255"/> <!-- bottom right -->
+        <color r="10" g="10" b="10"/> <!-- top right -->
+    </background>
+    <camera type="perspective">
+        <position x="0" y="-90" z="30"/> 
+        <target x="0" y="0" z="0"/>
+        <up x="0" y="1" z="0"/>
+        <fovy value="25.0" />
+        <!--<aspect value="1.33"/>-->
+        <fdistance value="1" />
+        <width value="900"/>
+        <height value="450"/>
+    </camera>
+    <scene>
+        <!-- Geometries -->
+        <object type="mesh" name="mesh1" material="grey" >             
+            <filename value="objects/teapot.obj" />
+            <clockwise value="false"/>
+        </object>      
+        <object type="mesh" name="mesh2" material="cyan" >             
+            <ntriangles value="2" />             
+            <indices value="0 1 2 0 2 3"/>             
+            <vertices value="-30 30.5 -1  30 30.5 -1  30 -30.5 -1  -30 -30.5 -1"/>             
+            <normals value="0 0 1  0 0 1  0 0 1  0 0 1 "/>
+            <clockwise value="true"/>
+        </object>
+
+        <!-- Lights -->
+        <light type="ambient" name="ambient_light">             
+            <intensity r="0.1" g="0.1" b="0.1"/>         
+        </light>         
+        <light type="directional" name="directional_light">             
+            <intensity r="0.9" g="0.6" b="0.5"/>             
+            <direction x="-5" y="-5" z="10"/>         
+        </light>         
+        <light type="directional" name="directional_light">             
+            <intensity r="0.9" g="0.9" b="0.9"/>             
+            <direction x="5" y="-5" z="10"/>         
+        </light>
+        <!--<light type="point" name="point_light">
+            <intensity r="0.9" g="0.6" b="0.5"/>
+            <position x="0" y="2.1" z="-1"/>
+        </light>
+        <light type="point" name="point_light2">
+            <intensity r="0.9" g="0.9" b="0.9"/>
+            <position x="-2" y="1.1" z="-5"/>
+        </light>-->
+    </scene>
+    <materials>
+        <!-- Library of materials -->
+        <material type="blinn" name="cyan">
+            <ambient r="0.1" g="0.1" b="0.1"/>
+            <diffuse r="0.1" g="0.9" b="0.9"/>
+            <specular r="0.8" g="0.8" b="0.1"/>
+            <glossiness value="128"/>
+        </material>
+        <material type="blinn" name="grey">
+            <ambient r="0.1" g="0.1" b="0.1"/>
+            <diffuse r="0.8" g="0.8" b="0.8"/>
+            <specular r="0" g="0" b="0"/>
+            <glossiness value="8"/>
+        </material>
+    </materials>
+    <running>
+        <integrator type="blinn">
+            <spp value="1"/>
+            <depth value="1"/>
+        </integrator>
+    </running>
+</target>

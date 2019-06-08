@@ -28,6 +28,8 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
     SurfaceInteraction *isect = new SurfaceInteraction();
     Ray r = ray;
     if (scene.intersect(r, isect)) {
+        Color color_result;
+        
         BlinnPhongMaterial * fm = dynamic_cast<BlinnPhongMaterial*>(isect->primitive->get_material());
         Color kd = fm->kd();
         Color ka = fm->ka();
@@ -37,7 +39,8 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
         Vec3 n = isect->n.norm();
         Vec3 v = isect->wo.norm();
 
-        Color color_result;
+        bool shadow_ignore = false;
+
         for (std::shared_ptr<Light> l : scene.lights){
             switch(l->get_type()){
                 case LightType::AMBIENT:
@@ -49,7 +52,7 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
                         Vec3 l = Vec3(Vec3(pl->get_position()) - isect->p);
 
                         Ray shadow_r = Ray(isect->p, l);
-                        if(!scene.intersect_p(shadow_r, 0.001, 1)){
+                        if(!scene.intersect_p(shadow_r, 0.001, 1) || shadow_ignore){
                             l = l.norm();
                             Vec3 h = (v + l) / (v + l).length();
                             color_result += kd * pl->get_intensity() * std::max(0.0, n.dot(l)) +
@@ -65,7 +68,7 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
                         Vec3 shadow_l = Vec3(pOut) - Vec3(isect->p);
 
                         Ray shadow_r = Ray(isect->p, shadow_l);
-                        if(!scene.intersect_p(shadow_r, 0.00001, 1)){
+                        if(!scene.intersect_p(shadow_r, 0.00001, 1) || shadow_ignore){
                             Vec3 h = (v + l) / (v + l).length();
                             color_result += kd * dl->get_intensity() * std::max(0.0, n.dot(l)) +
                                             ks * dl->get_intensity() * std::pow(std::max(0.0, n.dot(h)), glossiness);
@@ -92,7 +95,7 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
                             }
 
                             Ray shadow_r = Ray(isect->p, l);
-                            if(!scene.intersect_p(shadow_r, 0.001, 1)){
+                            if(!scene.intersect_p(shadow_r, 0.001, 1) || shadow_ignore){
                                 l = l.norm();
                                 Vec3 h = (v + l) / (v + l).length();
                                 color_result += kd * sl->get_intensity() * delta_intensity * std::max(0.0, n.dot(l)) +

@@ -35,6 +35,7 @@ namespace target{
 			static void processSetup(std::shared_ptr<SampleIntegrator> & integrator, XMLElement *& element);
 			static std::shared_ptr<target::Sphere> processSphere(XMLElement *& element);
 			static std::vector< std::shared_ptr<target::Triangle> > processTriangle(XMLElement *& element);
+			static std::vector< std::shared_ptr<target::Triangle> > processMeshObject(const std::string & filename, const std::string & name, const bool & clk = true);
 
 		public:
 			static void run(const std::string & description, 

@@ -41,7 +41,7 @@ namespace target{
 					surface->p = r(min_root);
 					surface->p_max = r(max_root);
 					surface->n = (Vec3(surface->p) - center) * 2.0;
-					surface->wo = (r.getDirection() - origin) * (-1);					
+					surface->wo = (origin - r.getDirection());					
 				}
 
 				return true; 

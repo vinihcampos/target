@@ -16,7 +16,9 @@ include_directories(include)
 # source
 # --------------------------------------- #
 file(GLOB SRC_TARGET "src/*.cpp")
+#file(GLOB SRC_TEST "src/mesh_test.cpp")
 
 # executables
 # --------------------------------------- #
 add_executable(target ${SRC_TARGET})
+#add_executable(mesh ${SRC_TEST})

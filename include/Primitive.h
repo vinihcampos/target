@@ -13,20 +13,30 @@ namespace target{
 	class Primitive{
 		protected:
 			std::shared_ptr<Material> material;
-			std::string name;
 			Bounds3 box;
 
 		public:
-			Primitive(const std::string & name) : name{name}{}
+			Material * get_material(void) { return material.get(); }
+			std::shared_ptr<Material>  get_material_shared(void) { return material; }
+			void set_material(const std::shared_ptr<Material> & material){ this->material = material; }
+			inline Bounds3 get_bounding_box(){ return box; }
+
 			virtual bool intersect( Ray& r, SurfaceInteraction *) const = 0;
 			virtual bool intersect_p( const Ray& r ) const = 0;
 			virtual bool intersect_p( const Ray& r, double tmin, double tmax ) const = 0;
-			Material * get_material(void) { return material.get(); }
-			void set_material(std::shared_ptr<Material> & material){ this->material = material; }
-			inline std::string getName(){ return name; }
-			inline Bounds3 get_bounding_box(){ return box; }
 	};
-	typedef Primitive Shape;
+
+	class Shape : public Primitive{
+		protected:
+			std::string name;
+		public:
+			Shape(const std::string & name) : name{name} {}
+			inline std::string getName(){ return name; }
+
+			virtual bool intersect( Ray& r, SurfaceInteraction *) const = 0;
+			virtual bool intersect_p( const Ray& r ) const = 0;
+			virtual bool intersect_p( const Ray& r, double tmin, double tmax ) const = 0;
+	};
 }
 
 #endif

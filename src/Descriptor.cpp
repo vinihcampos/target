@@ -225,6 +225,8 @@ void target::Descriptor::processScene(std::vector<std::shared_ptr<Primitive>> & 
 			processObject(primitives, materials, pChild);
 		}else if(!elementName.compare("Light") || !elementName.compare("light")){
 			processLight(lights, pChild);
+		}else if(!elementName.compare("Aggregate") || !elementName.compare("aggregate")){
+			processAggregate(primitives, materials, pChild);
 		}else{
 			std::cerr << "The element " << elementName << " is invalid" << std::endl;
 		}
@@ -265,6 +267,41 @@ void target::Descriptor::processObject(std::vector<std::shared_ptr<Primitive>> &
 	}else{
 		std::cerr << "The object type is invalid" << std::endl;
 	}
+}
+
+void target::Descriptor::processAggregate(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, XMLElement *& element){
+	std::string split_method_str = "";
+	int max_prims_node;
+	SplitMethod split_method;
+
+	if(element->Attribute("split_method") != NULL) 
+		split_method_str = element->Attribute("split_method");
+
+	if(!split_method_str.compare("middle")){
+		split_method = SplitMethod::Middle;
+	}else{
+		split_method = SplitMethod::EqualCounts;
+	}
+
+
+	max_prims_node = element->IntAttribute("max_prims_node", 1);
+
+	std::vector<std::shared_ptr<Primitive>> primitives_bvh;
+
+	std::string elementName;
+	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
+		elementName = pChild->Name();
+		if(!elementName.compare("Object") || !elementName.compare("object")){
+			processObject(primitives_bvh, materials, pChild);
+		}else{
+			std::cerr << "The element " << elementName << " is invalid" << std::endl;
+		}
+	}
+
+	std::shared_ptr<BVHAccel> bvh = std::shared_ptr<BVHAccel>(new BVHAccel(primitives_bvh, max_prims_node, split_method));
+	bvh->BVHBuild();
+
+	primitives.push_back(bvh);
 }
 
 void target::Descriptor::processLight(std::vector<std::shared_ptr<Light>> & lights, XMLElement *& element){

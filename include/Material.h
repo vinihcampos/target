@@ -9,6 +9,7 @@ namespace target{
 		public:
 			Material(const Color & difuse) : difuse{difuse}{}
 			virtual ~Material() = default;
+			inline Color kd(){ return this->difuse; }
 	};
 
 }

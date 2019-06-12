@@ -26,19 +26,9 @@ namespace target{
 	        bool intersect( Ray & r, SurfaceInteraction *isect ) const{
 	        	bool hitted = false;
 	        	for(std::shared_ptr<Primitive> pr : primitives){
-	        		SurfaceInteraction *temp = new SurfaceInteraction();
-	        		if(pr->intersect(r, temp)){
-	        			if(temp->time < isect->time){
-	        				isect->primitive = pr;
-	        				isect->time = temp->time;
-							isect->p = temp->p;
-							isect->p_max = temp->p_max;
-							isect->n = temp->n;
-							isect->wo = temp->wo;
-	        			}
+	        		if(pr->intersect(r, isect)){
 	        			hitted = true;
 	        		}
-	        		delete temp;
 	        	}
 	        	return hitted;
 	        }

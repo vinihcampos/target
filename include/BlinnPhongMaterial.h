@@ -20,7 +20,6 @@ namespace target{
 			: ambient{ambient}, specular{specular}, 
 			glossiness{glossiness}, mirror{mirror}, Material{difuse}{}
 
-			inline Color kd(){ return this->difuse; }
 			inline Color ka(){ return ambient; }
 			inline Color ks(){ return specular; }
 			inline Color km(){ return mirror; }

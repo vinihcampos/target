@@ -96,7 +96,7 @@ namespace target{
  			}
 	};
 
-	inline Vec3 operator/(const double v, Vec3& vec){ return vec / v; }
+	inline Vec3 operator/(const double v, Vec3 vec){ return Vec3( v / vec.x(), v / vec.y(), v / vec.z() ); }
 
 	typedef Vec3 Color;
 

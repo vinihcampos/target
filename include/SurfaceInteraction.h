@@ -5,6 +5,7 @@
 #include "Point3.h"
 #include "Point2.h"
 #include "Vec3.h"
+#include "Material.h"
 #include <limits>
 #include <memory>
 
@@ -34,6 +35,7 @@ namespace target{
 			Point2 uv; // Parametric coordinate (u,v) of the hit surface.
 			
 			std::shared_ptr<Primitive> primitive; // Pointer to the primitive.
+			std::shared_ptr<Material> material; // Pointer to the material.
 	};
 
 }

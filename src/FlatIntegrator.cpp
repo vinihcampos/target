@@ -10,7 +10,7 @@ target::Color target::FlatIntegrator::Li( const Ray& ray, const Scene& scene, Sa
     SurfaceInteraction *isect = new SurfaceInteraction();
     Ray r = ray;
     if (scene.intersect(r, isect)) {
-        FlatMaterial * fm = static_cast<FlatMaterial*>(isect->primitive->get_material());
+        FlatMaterial * fm = static_cast<FlatMaterial*>(isect->material.get());
         return fm->kd() / 255;
     }else {
         double u = 0.0;

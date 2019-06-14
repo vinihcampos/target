@@ -30,7 +30,8 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
     if (scene.intersect(r, isect)) {
         Color color_result;
         
-        BlinnPhongMaterial * fm = dynamic_cast<BlinnPhongMaterial*>(isect->primitive->get_material());
+        BlinnPhongMaterial * fm = dynamic_cast<BlinnPhongMaterial*>(isect->material.get());
+
         Color kd = fm->kd();
         Color ka = fm->ka();
         Color ks = fm->ks();

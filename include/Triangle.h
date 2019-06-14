@@ -104,6 +104,10 @@ namespace target{
 					v *= inv_det;
 
 					if(hit_t < EPSILON) return false;
+					
+					if(r.tMax >= hit_t) r.tMax = hit_t;
+					else return false;
+					
 					if(isect != nullptr){
 			    		isect->time = hit_t;
 			    		isect->p = r(hit_t);
@@ -118,6 +122,7 @@ namespace target{
 						}
 
 			    		isect->n = (n1*(1-u-v) + n2*u + n3*v).norm();
+			    		isect->material = this->material;
 			    	}
 				}else{
 					if(det > -EPSILON && det < EPSILON) return 0;
@@ -134,6 +139,10 @@ namespace target{
 
 					double hit_t = edge2.dot(q) * inv_det;
 					if(hit_t < EPSILON) return false;
+
+					if(r.tMax >= hit_t) r.tMax = hit_t;
+					else return false;
+
 					if(isect != nullptr){
 			    		isect->time = hit_t;
 			    		isect->p = r(hit_t);
@@ -148,6 +157,7 @@ namespace target{
 						}
 
 			    		isect->n = (n1*(1-u-v) + n2*u + n3*v).norm();
+			    		isect->material = this->material;
 			    	}				
  				}
  				return true;
@@ -216,7 +226,7 @@ namespace target{
  				}
  				return true;
 			}
-			inline const Material * get_material(void) const { return this->material.get(); }
+			//inline Material * get_material(void) const { return this->material.get(); }
 	};
 
 }

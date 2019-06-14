@@ -10,7 +10,9 @@ namespace target{
 		private:
 			Point3 o;
 			Vec3 d;
-		public:
+			
+		public:			
+			double tMax = std::numeric_limits<double>::max();
 			Ray(){}
 			Ray(const Point3 o, const Vec3 d) : o{o}, d{d} {}
 			inline Point3 operator()(const float & t) { return d * t + o; }

@@ -36,12 +36,16 @@ namespace target{
 				float min_root = std::min(r1,r2);
 				float max_root = std::max(r1,r2);
 
+				if(r.tMax >= min_root) r.tMax = min_root;
+				else return false;
+
 				if(surface != nullptr){
 					surface->time = min_root;
 					surface->p = r(min_root);
 					surface->p_max = r(max_root);
 					surface->n = (Vec3(surface->p) - center) * 2.0;
-					surface->wo = (origin - r.getDirection());					
+					surface->wo = (origin - r.getDirection());
+					surface->material = this->material;				
 				}
 
 				return true; 
@@ -82,7 +86,8 @@ namespace target{
 				float r2 = (-b - std::sqrt(delta)) / (2 * a);
 				return ((r2 >= tmin) && (r2 <= tmax));
 			}
-			inline const Material * get_material(void) const { return this->material.get(); }
+
+			//inline Material * get_material(void) const { return this->material.get(); }
 			inline Vec3 getCenter(){ return center; }
 			inline float getRadius() { return radius; }
 	};

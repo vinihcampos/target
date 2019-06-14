@@ -25,83 +25,85 @@
     <!--- The Scene -->
     <scene>
         <!-- Front-left pyramid -->
-        <object type="sphere" name="sphere1a" material= "red_2">
-            <radius value="0.5"/>
-            <center x="-3" y="0" z="2"/>
-        </object>
-        <object type="sphere" name="sphere1b" material="red_1">
-            <radius value="0.5"/>
-            <center x="-2.5" y="0" z="2.86"/>
-        </object>
-        <object type="sphere" name="spher1c" material="red_3">
-            <radius value="0.5"/>
-            <center x="-2" y="0" z="2"/>
-        </object>
-        <object type="sphere" name="spher1c" material="red">
-            <radius value="0.5"/>
-            <center x="-2.5" y="0.79" z="2.29"/>
-        </object>
+        <aggregate split_method="middle" max_prims_node="4">
+            <object type="sphere" name="sphere1a" material= "red_2">
+                <radius value="0.5"/>
+                <center x="-3" y="0" z="2"/>
+            </object>
+            <object type="sphere" name="sphere1b" material="red_1">
+                <radius value="0.5"/>
+                <center x="-2.5" y="0" z="2.86"/>
+            </object>
+            <object type="sphere" name="spher1c" material="red_3">
+                <radius value="0.5"/>
+                <center x="-2" y="0" z="2"/>
+            </object>
+            <object type="sphere" name="spher1c" material="red">
+                <radius value="0.5"/>
+                <center x="-2.5" y="0.79" z="2.29"/>
+            </object>
 
 
-        <!-- Front-right pyramid -->
-        <object type="sphere" name="sphere1a" material="blue_2">
-            <radius value="0.5"/>
-            <center x="3" y="0" z="2"/>
-        </object>
-        <object type="sphere" name="sphere1b" material="blue_1">
-            <radius value="0.5"/>
-            <center x="2.5" y="0" z="2.86"/>
-        </object>
-        <object type="sphere" name="spher1c" material="blue_3">
-            <radius value="0.5"/>
-            <center x="2" y="0" z="2"/>
-        </object>
-        <object type="sphere" name="spher1c" material="blue">
-            <radius value="0.5"/>
-            <center x="2.5" y="0.79" z="2.29"/>
-        </object>
+            <!-- Front-right pyramid -->
+            <object type="sphere" name="sphere1a" material="blue_2">
+                <radius value="0.5"/>
+                <center x="3" y="0" z="2"/>
+            </object>
+            <object type="sphere" name="sphere1b" material="blue_1">
+                <radius value="0.5"/>
+                <center x="2.5" y="0" z="2.86"/>
+            </object>
+            <object type="sphere" name="spher1c" material="blue_3">
+                <radius value="0.5"/>
+                <center x="2" y="0" z="2"/>
+            </object>
+            <object type="sphere" name="spher1c" material="blue">
+                <radius value="0.5"/>
+                <center x="2.5" y="0.79" z="2.29"/>
+            </object>
 
-        <!-- Back-center pyramid -->
-        <object type="sphere" name="sphere1a" material="green_2">
-            <radius value="0.5"/>
-            <center x="-0.5" y="0" z="-2"/>
-        </object>
-        <object type="sphere" name="spher1c" material="green_1">
-            <radius value="0.5"/>
-            <center x="0.5" y="0" z="-2"/>
-        </object>
-        <object type="sphere" name="sphere1b" material="green_3">
-            <radius value="0.5"/>
-            <center x="0" y="0" z="-2.86"/>
-        </object>
-        <object type="sphere" name="spher1c" material="green">
-            <radius value="0.5"/>
-            <center x="0" y="0.79" z="-2.29"/>
-        </object>
+            <!-- Back-center pyramid -->
+            <object type="sphere" name="sphere1a" material="green_2">
+                <radius value="0.5"/>
+                <center x="-0.5" y="0" z="-2"/>
+            </object>
+            <object type="sphere" name="spher1c" material="green_1">
+                <radius value="0.5"/>
+                <center x="0.5" y="0" z="-2"/>
+            </object>
+            <object type="sphere" name="sphere1b" material="green_3">
+                <radius value="0.5"/>
+                <center x="0" y="0" z="-2.86"/>
+            </object>
+            <object type="sphere" name="spher1c" material="green">
+                <radius value="0.5"/>
+                <center x="0" y="0.79" z="-2.29"/>
+            </object>
 
-        <!-- Center-front pyramid -->
-        <object type="sphere" name="sphere1a" material="yellow_2">
-            <radius value="0.5"/>
-            <center x="-0.5" y="0" z="6"/>
-        </object>
-        <object type="sphere" name="spher1c" material="yellow_1">
-            <radius value="0.5"/>
-            <center x="0.5" y="0" z="6"/>
-        </object>
-        <object type="sphere" name="sphere1b" material="yellow">
-            <radius value="0.5"/>
-            <center x="0" y="0" z="6.86"/>
-        </object>
-        <object type="sphere" name="spher1c" material="gold">
-            <radius value="0.5"/>
-            <center x="0" y="0.79" z="6.29"/>
-        </object>
+            <!-- Center-front pyramid -->
+            <object type="sphere" name="sphere1a" material="yellow_2">
+                <radius value="0.5"/>
+                <center x="-0.5" y="0" z="6"/>
+            </object>
+            <object type="sphere" name="spher1c" material="yellow_1">
+                <radius value="0.5"/>
+                <center x="0.5" y="0" z="6"/>
+            </object>
+            <object type="sphere" name="sphere1b" material="yellow">
+                <radius value="0.5"/>
+                <center x="0" y="0" z="6.86"/>
+            </object>
+            <object type="sphere" name="spher1c" material="gold">
+                <radius value="0.5"/>
+                <center x="0" y="0.79" z="6.29"/>
+            </object>
 
-        <!-- Ground -->
-        <object type="sphere" name="sphere4" material="grey">
-            <radius value="5000"/>
-            <center x="0" y="-5000.5" z="-1"/>
-        </object>
+            <!-- Ground -->
+            <object type="sphere" name="sphere4" material="grey">
+                <radius value="5000"/>
+                <center x="0" y="-5000.5" z="-1"/>
+            </object>
+        </aggregate>
 
         <!-- Lights -->
         <light type="ambient" name="ambient_light">

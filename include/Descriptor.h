@@ -13,6 +13,7 @@
 #include "Material.h"
 #include "Light.h"
 #include "Triangle.h"
+#include "BVHAccel.h"
 #include <string>
 #include <map>
 #include <vector>
@@ -29,6 +30,7 @@ namespace target{
 			static void processScene(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, std::vector<std::shared_ptr<Light>> & lights, XMLElement *& element);
 			static void processObject(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, XMLElement *& element);
 			static void processLight(std::vector<std::shared_ptr<Light>> & lights, XMLElement *& element);
+			static void processAggregate(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, XMLElement *& element);
 			static void processMaterials(std::map<std::string, std::shared_ptr<Material>> & materials, XMLElement *& element);
 			static Color processFlatMaterial(XMLElement *& element);
 			static std::shared_ptr<target::Material> processBlinnMaterial(XMLElement *& element);

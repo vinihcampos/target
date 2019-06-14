@@ -71,6 +71,13 @@ namespace target{
 				if (tyMin > tMin) tMin = tyMin;
 				if (tyMax < tMax) tMax = tyMax;
 
+				double tzMin = (bounds[ dirIsNeg[2]].z() - ray.getOrigin().z) * invDir.z();
+				double tzMax = (bounds[1-dirIsNeg[2]].z() - ray.getOrigin().z) * invDir.z();
+				// Update tMax and tzMax to ensure robust bounds intersection
+				if (tMin > tzMax || tzMin > tMax) return false;
+				if (tzMin > tMin) tMin = tzMin;
+				if (tzMax < tMax) tMax = tzMax;
+
 				//Check for ray intersection against z slab
 				return (tMin < ray.tMax) && (tMax > 0);
 			}

@@ -30,9 +30,7 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
     if (scene.intersect(r, isect)) {
         Color color_result;
         
-        //std::cout << "[INFO ==> MATERIAL READING]\n";
         BlinnPhongMaterial * fm = dynamic_cast<BlinnPhongMaterial*>(isect->material.get());
-        //std::cout << "[INFO ==> MATERIAL READ]" << (fm == nullptr) << std::endl;
 
         Color kd = fm->kd();
         Color ka = fm->ka();
@@ -42,7 +40,7 @@ target::Color target::BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sce
         Vec3 n = isect->n.norm();
         Vec3 v = isect->wo.norm();
 
-        bool shadow_ignore = true;
+        bool shadow_ignore = false;
 
         for (std::shared_ptr<Light> l : scene.lights){
             switch(l->get_type()){

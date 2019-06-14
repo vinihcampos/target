@@ -81,9 +81,14 @@ namespace target{
 				root = recursiveBuild(primitiveInfo, 0, primitives.size(), &totalNodes, orderedPrims);				
 				primitives.swap(orderedPrims);
 
+				//std::cout << "Total nodes: " << totalNodes << std::endl;
+				//print_tree(root);
+
 				offset = 0;
 				nodes = new LinearBVHNode[totalNodes];
 				flattenBVHTree(root, &offset);
+
+				//print_flatten_tree(nodes, totalNodes);
 			}
 
 			bool intersect( Ray& r, SurfaceInteraction * isect) const{
@@ -128,8 +133,42 @@ namespace target{
 				Ray ray = r;
 				return intersect(ray, nullptr);
 			}
-			virtual bool intersect_p( const Ray& r, double tmin, double tmax ) const{ // TODO
-				return true;
+			bool intersect_p( const Ray& r, double tmin, double tmax ) const{ // TODO
+				Ray ray = r;
+				Vec3 invDir = 1.0 / ray.getDirection();
+				int dirIsNeg[3] = { invDir.x() < 0, invDir.y() < 0, invDir.z() < 0 };
+
+				int toVisitOffset = 0, currentNodeIndex = 0;
+				int nodesToVisit[64];
+
+				while (true) {
+					const LinearBVHNode *node = &nodes[currentNodeIndex];
+					// Check ray against BVH node
+					if (node->bounds.intersect_p(ray, invDir, dirIsNeg)) {
+						if (node->nPrimitives > 0) {
+							// Intersect ray with primitives in leaf BVH node
+							for (int i = 0; i < node->nPrimitives; ++i)
+								if (primitives[node->primitivesOffset + i]->intersect_p(ray, tmin, tmax)){
+									return true;
+								}
+							if (toVisitOffset == 0) break;
+							currentNodeIndex = nodesToVisit[--toVisitOffset];
+						}else{
+							// Put far bvh node on nodesToVisit stack, advance to near node
+							if (dirIsNeg[node->axis]) {
+								nodesToVisit[toVisitOffset++] = currentNodeIndex + 1;
+								currentNodeIndex = node->secondChildOffset;
+							} else {
+								nodesToVisit[toVisitOffset++] = node->secondChildOffset;
+								currentNodeIndex = currentNodeIndex + 1;
+							}
+						}
+					}else{
+						if (toVisitOffset == 0) break;
+						currentNodeIndex = nodesToVisit[--toVisitOffset];
+					}
+				}
+				return false;
 			}
 
 		private: // Private methods
@@ -221,6 +260,24 @@ namespace target{
 				}
 
 				return myOffset;
+			}
+
+			void print_tree(BVHBuildNode* root) const {
+			    if (root->children[0] == nullptr && root->children[1] == nullptr)
+			        std::cout << "l: " << root->firstPrimOffset << "/" << root->nPrimitives << std::endl;         
+			    std::cout << "i: " << root->firstPrimOffset << "/" << root->nPrimitives << std::endl;                                                                             
+			    if (root->children[0] != nullptr) { 
+			        print_tree(root->children[0]);                                                                                                                             
+			    } 
+			    if (root->children[1] != nullptr) { 
+			        print_tree(root->children[1]);                                                                                                                             
+			    }   
+			}
+
+			void print_flatten_tree(LinearBVHNode *nodes, const int & totalNodes) const {
+				for (int i = 0; i < totalNodes; ++i){
+					std::cout << "i: " << nodes[i].primitivesOffset << "/" << nodes[i].nPrimitives << std::endl;
+				}  
 			}
 	};
 

@@ -15,8 +15,8 @@
         <fovy value="25.0" />
         <!--<aspect value="1.33"/>-->
         <fdistance value="1" />
-        <width value="900"/>
-        <height value="450"/>
+        <width value="1800"/>
+        <height value="900"/>
     </camera>
     <scene>
         <!-- Geometries -->
@@ -36,6 +36,7 @@
                 <center x="15" y="-2" z="15"/>
             </object>
         </aggregate>
+        
         <!-- Lights -->
         <light type="ambient" name="ambient_light">             
             <intensity r="0.1" g="0.1" b="0.1"/>         

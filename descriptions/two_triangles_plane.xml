@@ -26,6 +26,8 @@
                 <indices value="0 1 2 0 2 3"/>
                 <vertices value="-3 -0.5 -3  3 -0.5 -3  3 -0.5 3  -3 -0.5 3"/>
                 <normals value="0 1 0  0 1 0  0 1 0  0 1 0"/>
+                <clockwise value="false"/>
+                <backfacecull value="true"/>
             </object>
 
             <object type="sphere" name="sphere1" material="greenish" >

@@ -26,6 +26,7 @@
                 <indices value="0 1 2 0 2 3"/>
                 <vertices value="-30 30.5 -1  30 30.5 -1  30 -30.5 -1  -30 -30.5 -1"/>
                 <normals value="0 0 1  0 0 1  0 0 1  0 0 1 "/>
+                <backfacecull value="true"/>
             </object>
             <object type="mesh" name="mesh1" material="grey" >             
                 <filename value="objects/teapot.obj" />
@@ -49,6 +50,20 @@
             <intensity r="0.9" g="0.9" b="0.9"/>             
             <direction x="5" y="-5" z="10"/>         
         </light>
+
+        <!--<light type="point" name="point_light">             
+            <intensity r="0.9" g="0.9" b="0.9"/>             
+            <position x="15" y="-10" z="30"/>
+        </light>-->
+
+        <!--<light type="spot" name="spot_light">             
+            <intensity r="0.9" g="0.3" b="0.1"/>             
+            <position x="0" y="50" z="30"/>
+            <point_at x="0" y="0" z="0"/>
+            <cutoff value="50"/>
+            <falloff value="20"/>
+        </light>-->
+
     </scene>
     <materials>
         <!-- Library of materials -->

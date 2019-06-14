@@ -1,0 +1,80 @@
+<target>
+    <settings>
+        <output name="millenium-falcon"/>
+    </settings>
+    <background>
+        <color r="0" g="0" b="0"/>
+    </background>
+    <camera type="perspective">
+        <position x="-1200" y="700" z="-3800"/> 
+        <target x="-300" y="100" z="-3000"/>
+        <up x="0" y="1" z="0"/>
+        <fovy value="25.0" />
+        <!--<aspect value="1.33"/>-->
+        <fdistance value="1" />
+        <width value="1800"/>
+        <height value="900"/>
+    </camera>
+    <scene>
+        <!-- Geometries -->
+        <aggregate split_method="middle" max_prims_node="4" >
+            <object type="mesh" name="mesh1" material="grey" >             
+                <filename value="objects/millenium-falcon.obj" />
+            </object>
+        </aggregate>
+        
+        <!-- Lights -->
+        <light type="ambient" name="ambient_light">             
+            <intensity r="0.1" g="0.1" b="0.1"/>         
+        </light>         
+        <light type="directional" name="directional_light">             
+            <intensity r="0.5" g="0.6" b="0.5"/>             
+            <direction x="-5" y="-5" z="10"/>         
+        </light>         
+        <light type="directional" name="directional_light">             
+            <intensity r="0.5" g="0.5" b="0.5"/>             
+            <direction x="5" y="-5" z="10"/>         
+        </light>
+
+        <!--<light type="point" name="point_light">             
+            <intensity r="0.9" g="0.9" b="0.9"/>             
+            <position x="15" y="-10" z="30"/>
+        </light>-->
+
+        <!--<light type="spot" name="spot_light">             
+            <intensity r="0.9" g="0.3" b="0.1"/>             
+            <position x="0" y="50" z="30"/>
+            <point_at x="0" y="0" z="0"/>
+            <cutoff value="50"/>
+            <falloff value="20"/>
+        </light>-->
+
+    </scene>
+    <materials>
+        <!-- Library of materials -->
+        <material type="blinn" name="cyan">
+            <ambient r="0.1" g="0.1" b="0.1"/>
+            <diffuse r="0.1" g="0.9" b="0.9"/>
+            <specular r="0.8" g="0.8" b="0.1"/>
+            <glossiness value="128"/>
+        </material>
+        <material type="blinn" name="grey">
+            <ambient r="0.1" g="0.1" b="0.1"/>
+            <diffuse r="0.8" g="0.8" b="0.8"/>
+            <specular r="0" g="0" b="0"/>
+            <glossiness value="8"/>
+        </material>
+        <material type="blinn" name="red_3">
+            <ambient r="0.6" g="0.6" b="0.6"/>
+            <diffuse r="1" g="0.4" b="0.4"/>
+            <specular r="0.8" g="0.8" b="0.8"/>
+            <glossiness value="64"/>
+        </material>
+    </materials>
+    <running>
+        <integrator type="blinn">
+            <spp value="1"/>
+            <depth value="1"/>
+        </integrator>
+    </running>
+</target>

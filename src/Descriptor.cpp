@@ -283,7 +283,6 @@ void target::Descriptor::processAggregate(std::vector<std::shared_ptr<Primitive>
 		split_method = SplitMethod::EqualCounts;
 	}
 
-
 	max_prims_node = element->IntAttribute("max_prims_node", 1);
 
 	std::vector<std::shared_ptr<Primitive>> primitives_bvh;
@@ -452,11 +451,14 @@ std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processTria
 	double v;
 
 	bool clk = true;
+	bool bfc = true;
 
 	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
 		elementName = pChild->Name();
 		if(!elementName.compare("clockwise") || !elementName.compare("Clockwise")){
 			clk = pChild->BoolAttribute("value", true);
+		}else if(!elementName.compare("backfacecull") || !elementName.compare("Backfacecull")){
+			bfc = pChild->BoolAttribute("value", true);
 		}
 	}
 
@@ -464,7 +466,7 @@ std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processTria
 		elementName = pChild->Name();
 		if(!elementName.compare("Filename") || !elementName.compare("filename")){
 			std::string filename_obj = pChild->Attribute("value");
-			return processMeshObject(filename_obj, name, clk);
+			return processMeshObject(filename_obj, name, clk, bfc);
 		}
 	}
 
@@ -500,6 +502,8 @@ std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processTria
 			continue;
 		}else if(!elementName.compare("clockwise") || !elementName.compare("Clockwise")){
 			continue;
+		}else if(!elementName.compare("backfacecull") || !elementName.compare("Backfacecull")){
+			continue;
 		}else{
 			std::cerr << "The element " << elementName << " is invalid" << std::endl;
 		}
@@ -510,13 +514,13 @@ std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processTria
 
 	for(int i = 0; i < n_triangles; ++i){
 		std::string name_tri = name + std::to_string(i);
-		triangles.push_back( std::shared_ptr<Triangle>(new Triangle(name, mesh, i, clk)) );
+		triangles.push_back( std::shared_ptr<Triangle>(new Triangle(name, mesh, i, clk, bfc)) );
 	}
 
 	return triangles;
 }
 
-std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processMeshObject(const std::string & filename, const std::string & name, const bool & clk){
+std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processMeshObject(const std::string & filename, const std::string & name, const bool & clk, const bool & bfc){
 	cy::TriMesh cyMesh;
 	if(cyMesh.LoadFromFileObj(filename.c_str(), false)){
 
@@ -557,7 +561,7 @@ std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processMesh
 
 		for(int i = 0; i < n_triangles; ++i){
 			std::string name_tri = name + std::to_string(i);
-			triangles.push_back( std::shared_ptr<Triangle>(new Triangle(name, mesh, i, clk)) );
+			triangles.push_back( std::shared_ptr<Triangle>(new Triangle(name, mesh, i, clk, bfc)) );
 		}
 
 		return triangles;

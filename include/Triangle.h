@@ -52,7 +52,7 @@ namespace target{
 			bool clk;
 
 		public:
-			Triangle( const std::string & name, std::shared_ptr<TriangleMesh> mesh, int tri_id, bool clk = true, bool bfc = false )
+			Triangle( const std::string & name, std::shared_ptr<TriangleMesh> mesh, int tri_id, bool clk = true, bool bfc = true )
             : Shape(name), mesh{mesh}, clk{clk}, backface_cull{bfc}{ 
             	id = &mesh->vertexId[ 3 * tri_id ];
 

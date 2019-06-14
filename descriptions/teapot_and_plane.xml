@@ -21,8 +21,9 @@
     <scene>
         <!-- Geometries -->
         <object type="mesh" name="mesh1" material="grey" >             
-            <filename value="objects/teapot-low.obj" />
+            <filename value="objects/teapot.obj" />
             <clockwise value="false"/>
+            <backfacecull value="false"/> 
         </object>      
         <object type="mesh" name="mesh2" material="cyan" >             
             <ntriangles value="2" />             

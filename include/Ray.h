@@ -12,9 +12,11 @@ namespace target{
 			Vec3 d;
 			
 		public:			
-			double tMax = std::numeric_limits<double>::max();
-			Ray(){}
-			Ray(const Point3 o, const Vec3 d) : o{o}, d{d} {}
+			double tMax;
+			
+			Ray() : tMax{std::numeric_limits<double>::max()} {}
+			Ray(const Point3 o, const Vec3 d) : o{o}, d{d}, tMax{std::numeric_limits<double>::max()} {}
+
 			inline Point3 operator()(const float & t) { return d * t + o; }
 			inline Point3 getOrigin() const { return o; }
 			inline Vec3 getDirection() const { return d; }

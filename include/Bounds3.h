@@ -49,6 +49,10 @@ namespace target{
 				}
 			}
 
+			inline bool operator==(const Bounds3 & b) const{
+				return pMin == b.pMin && pMax == b.pMax;
+			}
+
 			inline Vec3 diag() { return pMax - pMin; }
 
 			inline int MaximumExtent(){

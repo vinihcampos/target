@@ -21,6 +21,7 @@ namespace target{
 				: p{p}, n{n}, wo{wo}, time{time}{}
 
 			SurfaceInteraction(){}
+			~SurfaceInteraction(){}
 
 			Point3 p; // Contact point.
 			Point3 p_max; // Other contact point.

@@ -1,0 +1,126 @@
+<target>
+    <settings>
+        <output name="test_transform"/>
+    </settings>
+    <background>
+        <color r="10" g="10" b="10"/> <!-- top left -->
+        <color r="153" g="204" b="255"/> <!-- bottom left -->
+        <color r="153" g="204" b="255"/> <!-- bottom right -->
+        <color r="10" g="10" b="10"/> <!-- top right -->
+    </background>
+    <camera type="perspective">
+        <position x="1" y="4.5" z="-10"/> 
+        <target x="0" y="0" z="0"/>
+        <up x="0" y="1" z="0"/>
+        <fovy value="30.0" />
+        <!--<aspect value="1.33"/>-->
+        <fdistance value="1" />
+        <width value="1125"/>
+        <height value="562"/>
+    </camera>
+    <scene>
+        <!-- Geometries -->
+        <object type="mesh" name="mesh1" material="grey" >
+            <ntriangles value="2" />
+            <indices value="0 1 2 0 2 3"/>
+            <vertices value="-3 -0.5 -3  3 -0.5 -3  3 -0.5 3  -3 -0.5 3"/>
+            <normals value="0 1 0  0 1 0  0 1 0  0 1 0"/>
+            <translate x=".5" y="0" z=".5"/>
+            <!--<scale x=".5" y="0" z="0"/>-->
+            <clockwise value="true"/>
+            <backfacecull value="false"/>
+        </object>
+        <object type="sphere" name="sphere2" material="redish">
+            <radius value="1"/>
+            <center x="0" y="0" z="0"/>
+            <scale x=".5" y=".5" z=".5"/>
+            <translate x="-1.86" y="0" z="-1"/>
+        </object>
+
+        <object type="sphere" name="sphere4" material="white">
+            <radius value="0.5"/>
+            <center x="2.5" y="0" z="-2.5"/>
+        </object>
+
+        <object type="sphere" name="sphere5" material="black">
+            <radius value="0.5"/>
+            <center x="-2.5" y="0" z="2.5"/>
+        </object>
+
+        <!-- Lights -->
+        <light type="ambient" name="ambient_light">
+            <intensity r="0.1" g="0.1" b="0.1"/>
+        </light>
+        <light type="point" name="point_light">
+            <intensity r="0.9" g="0.6" b="0.5"/>
+            <position x="0" y="2.1" z="-1"/>
+        </light>
+        <light type="point" name="point_light2">
+            <intensity r="0.9" g="0.9" b="0.9"/>
+            <position x="-2" y="1.1" z="-5"/>
+        </light>
+    </scene>
+    <materials>
+        <!-- Library of materials -->
+       <material type="blinn" name="black">
+            <ambient r="0.1" g="0.1" b="0.1"/>
+            <diffuse r="0.1" g="0.1" b="0.1"/>
+            <specular r="0.9" g="0.9" b="0.9"/>
+            <glossiness value="128"/>
+        </material>
+        <material type="blinn" name="yellow">
+            <ambient r="0.1" g="0.1" b="0.1"/>
+            <diffuse r="0.9" g="0.9" b="0.1"/>
+            <specular r="0.8" g="0.8" b="0.1"/>
+            <glossiness value="128"/>
+        </material>
+        <material type="blinn" name="magenta">
+            <ambient r="0.1" g="0.1" b="0.1"/>
+            <diffuse r="0.9" g="0.1" b="0.9"/>
+            <specular r="0.8" g="0.8" b="0.1"/>
+            <glossiness value="128"/>
+        </material>
+        <material type="blinn" name="cyan">
+            <ambient r="0.1" g="0.1" b="0.1"/>
+            <diffuse r="0.1" g="0.9" b="0.9"/>
+            <specular r="0.8" g="0.8" b="0.1"/>
+            <glossiness value="128"/>
+        </material>
+        <material type="blinn" name="redish">
+            <ambient r="0.1" g="0.1" b="0.1"/>
+            <diffuse r="0.9" g="0.2" b="0.1"/>
+            <specular r="0.8" g="0.8" b="0.8"/>
+            <glossiness value="64"/>
+        </material>
+        <material type="blinn" name="greenish">
+            <ambient r="0.1" g="0.1" b="0.1"/>
+            <diffuse r="0.2" g="0.9" b="0.2"/>
+            <specular r="0.8" g="0.8" b="0.8"/>
+            <glossiness value="256"/>
+        </material>
+        <material type="blinn" name="blueish">
+            <ambient r="0.1" g="0.1" b="0.1"/>
+            <diffuse r="0.1" g="0.2" b="0.9"/>
+            <specular r="0.8" g="0.8" b="0.8"/>
+            <glossiness value="20"/>
+        </material>
+        <material type="blinn" name="grey">
+            <ambient r="0.1" g="0.1" b="0.1"/>
+            <diffuse r="0.8" g="0.8" b="0.8"/>
+            <specular r="0" g="0" b="0"/>
+            <glossiness value="8"/>
+        </material>
+        <material type="blinn" name="white">
+            <ambient r="0.1" g="0.1" b="0.1"/>
+            <diffuse r="0.9" g="0.9" b="0.9"/>
+            <specular r="1" g="1" b="1"/>
+            <glossiness value="256"/>
+        </material>
+    </materials>
+    <running>
+        <integrator type="blinn">
+            <spp value="1"/>
+            <depth value="1"/>
+        </integrator>
+    </running>
+</target>

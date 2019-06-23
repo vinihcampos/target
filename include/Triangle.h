@@ -52,8 +52,8 @@ namespace target{
 			bool clk;
 
 		public:
-			Triangle( const std::string & name, std::shared_ptr<TriangleMesh> mesh, int tri_id, bool clk = true, bool bfc = true )
-            : Shape(name), mesh{mesh}, clk{clk}, backface_cull{bfc}{ 
+			Triangle( const std::string & name, std::shared_ptr<TriangleMesh> mesh, int tri_id,  const std::shared_ptr<Transform> & transform, bool clk = true, bool bfc = true )
+            : Shape(name, transform), mesh{mesh}, clk{clk}, backface_cull{bfc}{ 
             	id = &mesh->vertexId[ 3 * tri_id ];
 
             	Bounds3 p0 = Bounds3( mesh->points[id[0]], mesh->points[id[0]] );
@@ -226,6 +226,7 @@ namespace target{
  				}
  				return true;
 			}
+			Bounds3 get_bounding_box() const { return this->box; }
 			//inline Material * get_material(void) const { return this->material.get(); }
 	};
 

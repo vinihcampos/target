@@ -416,6 +416,10 @@ std::shared_ptr<target::Sphere> target::Descriptor::processSphere(XMLElement *& 
 	if(element->Attribute("name") != NULL) 
 		name = element->Attribute("name");
 
+	std::vector<std::shared_ptr<Transform>> transforms;
+	std::shared_ptr<Transform> translate = std::shared_ptr<Transform>( new Transform(T(0,0,0)) );
+	std::shared_ptr<Transform> scale = std::shared_ptr<Transform>( new Transform(S(1,1,1)) );
+
 	std::string elementName;
 	double radius = 1;
 	double x = 0;
@@ -429,12 +433,28 @@ std::shared_ptr<target::Sphere> target::Descriptor::processSphere(XMLElement *& 
 			x = pChild->DoubleAttribute("x", 0.0);
 			y = pChild->DoubleAttribute("y", 0.0);
 			z = pChild->DoubleAttribute("z", 0.0);
+		}else if(!elementName.compare("Translate") || !elementName.compare("translate")){
+			Vec3 delta;
+			delta[0] = pChild->DoubleAttribute("x", 0.0);
+			delta[1] = pChild->DoubleAttribute("y", 0.0);
+			delta[2] = pChild->DoubleAttribute("z", 0.0);
+			translate = std::shared_ptr<Transform>( new Transform(T(delta)) );
+		}else if(!elementName.compare("Scale") || !elementName.compare("scale")){
+			Vec3 delta;
+			delta[0] = pChild->DoubleAttribute("x", 0.0);
+			delta[1] = pChild->DoubleAttribute("y", 0.0);
+			delta[2] = pChild->DoubleAttribute("z", 0.0);
+			scale = std::shared_ptr<Transform>( new Transform(S(delta)) );
 		}else{
 			std::cerr << "The element " << elementName << " is invalid" << std::endl;
 		}
 	}
 
-	return std::shared_ptr<Sphere>(new Sphere(Vec3(x,y,z), radius, name));
+	transforms.push_back(scale);
+	transforms.push_back(translate);
+
+	std::shared_ptr<Transform> transform = Compose(transforms);
+	return std::shared_ptr<Sphere>(new Sphere(Vec3(x,y,z), radius, name, transform));
 }
 
 std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processTriangle(XMLElement *& element){
@@ -453,20 +473,41 @@ std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processTria
 	bool clk = true;
 	bool bfc = true;
 
+	std::vector<std::shared_ptr<Transform>> transforms;
+	std::shared_ptr<Transform> translate = std::shared_ptr<Transform>( new Transform(T(0,0,0)) );
+	std::shared_ptr<Transform> scale = std::shared_ptr<Transform>( new Transform(S(1,1,1)) );
+
 	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
 		elementName = pChild->Name();
 		if(!elementName.compare("clockwise") || !elementName.compare("Clockwise")){
 			clk = pChild->BoolAttribute("value", true);
 		}else if(!elementName.compare("backfacecull") || !elementName.compare("Backfacecull")){
 			bfc = pChild->BoolAttribute("value", true);
+		}else if(!elementName.compare("Translate") || !elementName.compare("translate")){
+			Vec3 delta;
+			delta[0] = pChild->DoubleAttribute("x", 0.0);
+			delta[1] = pChild->DoubleAttribute("y", 0.0);
+			delta[2] = pChild->DoubleAttribute("z", 0.0);
+			translate = std::shared_ptr<Transform>( new Transform(T(delta)) );
+		}else if(!elementName.compare("Scale") || !elementName.compare("scale")){
+			Vec3 delta;
+			delta[0] = pChild->DoubleAttribute("x", 0.0);
+			delta[1] = pChild->DoubleAttribute("y", 0.0);
+			delta[2] = pChild->DoubleAttribute("z", 0.0);
+			scale = std::shared_ptr<Transform>( new Transform(S(delta)) );
 		}
 	}
+
+	transforms.push_back(scale);
+	transforms.push_back(translate);
+
+	std::shared_ptr<Transform> transform = Compose(transforms);
 
 	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
 		elementName = pChild->Name();
 		if(!elementName.compare("Filename") || !elementName.compare("filename")){
 			std::string filename_obj = pChild->Attribute("value");
-			return processMeshObject(filename_obj, name, clk, bfc);
+			return processMeshObject(filename_obj, name, transform, clk, bfc);
 		}
 	}
 
@@ -487,7 +528,7 @@ std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processTria
 				Point3 p; p.x = v;
 				ss >> v;  p.y = v;
 				ss >> v;  p.z = v;
-				vertices.push_back(p);
+				vertices.push_back(transform->point(p));
 			}
 		}else if(!elementName.compare("Normals") || !elementName.compare("normals")){
 			std::string normals_str = pChild->Attribute("value");
@@ -496,13 +537,17 @@ std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processTria
 				Vec3 n; n.setX(v);
 				ss >> v;  n.setY(v);
 				ss >> v;  n.setZ(v);
-				normals.push_back(n);
+				normals.push_back(transform->normal(n));
 			}
 		}else if(!elementName.compare("Uv") || !elementName.compare("uv")){
 			continue;
 		}else if(!elementName.compare("clockwise") || !elementName.compare("Clockwise")){
 			continue;
 		}else if(!elementName.compare("backfacecull") || !elementName.compare("Backfacecull")){
+			continue;
+		}else if(!elementName.compare("Translate") || !elementName.compare("translate")){
+			continue;
+		}else if(!elementName.compare("Scale") || !elementName.compare("scale")){
 			continue;
 		}else{
 			std::cerr << "The element " << elementName << " is invalid" << std::endl;
@@ -514,13 +559,13 @@ std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processTria
 
 	for(int i = 0; i < n_triangles; ++i){
 		std::string name_tri = name + std::to_string(i);
-		triangles.push_back( std::shared_ptr<Triangle>(new Triangle(name, mesh, i, clk, bfc)) );
+		triangles.push_back( std::shared_ptr<Triangle>(new Triangle(name, mesh, i, transform, clk, bfc)) );
 	}
 
 	return triangles;
 }
 
-std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processMeshObject(const std::string & filename, const std::string & name, const bool & clk, const bool & bfc){
+std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processMeshObject(const std::string & filename, const std::string & name,  const std::shared_ptr<Transform> & transform, const bool & clk, const bool & bfc){
 	cy::TriMesh cyMesh;
 	if(cyMesh.LoadFromFileObj(filename.c_str(), false)){
 
@@ -543,7 +588,7 @@ std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processMesh
 		// Getting the vertices
 		for(int i = 0; i < cyMesh.NV(); ++i){
 			cy::Point3f p = cyMesh.V(i);
-			vertices.push_back( Point3( p[0], p[1], p[2] ) );
+			vertices.push_back( transform->point(Point3( p[0], p[1], p[2] )) );
 		}
 
 		// Getting the normals
@@ -553,7 +598,7 @@ std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processMesh
 
 		for(int i = 0; i < cyMesh.NVN(); ++i){
 			cy::Point3f p = cyMesh.VN(i);
-			normals.push_back( Vec3(p[0], p[1], p[2]) );
+			normals.push_back( transform->normal(Vec3(p[0], p[1], p[2])) );
 		}
 
 		std::shared_ptr<TriangleMesh> mesh = std::shared_ptr<TriangleMesh>(new TriangleMesh(indices, vertices, normals));
@@ -561,7 +606,7 @@ std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processMesh
 
 		for(int i = 0; i < n_triangles; ++i){
 			std::string name_tri = name + std::to_string(i);
-			triangles.push_back( std::shared_ptr<Triangle>(new Triangle(name, mesh, i, clk, bfc)) );
+			triangles.push_back( std::shared_ptr<Triangle>(new Triangle(name, mesh, i, transform, clk, bfc)) );
 		}
 
 		return triangles;

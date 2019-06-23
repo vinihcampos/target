@@ -31,10 +31,13 @@
             <object type="mesh" name="mesh1" material="grey" >             
                 <filename value="objects/teapot.obj" />
                 <clockwise value="false"/>
+                <translate x="-10" y="0" z="0"/>
+                <scale x="1" y="1" z="1"/>
             </object>
             <object type="sphere" name="sphere1" material="cyan" >
                 <radius value="2"/>
                 <center x="15" y="-2" z="15"/>
+                <translate x="1" y="0" z="0"/>
             </object>
         </aggregate>
         

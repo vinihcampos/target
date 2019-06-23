@@ -8,10 +8,9 @@
 #include "Buffer.h"
 #include <memory>
 #include <cmath>
+#include "Util.h"
 
 namespace target{
-	
-	const double PI = 3.14159265;
 
 	class Camera{
 		

@@ -11,11 +11,11 @@
 
 namespace target{
 
+	inline double toRad(const double & theta){
+		return theta * PI / 180;
+	}
+
 	class Transform{
-		private:
-			inline double toRad(const double & theta){
-				return theta * PI / 180;
-			}
 		public:
 			Matrix4x4 m, mInv;
 			
@@ -36,74 +36,6 @@ namespace target{
 
 			inline Transform inv(){
 				return Transform(mInv, m);	
-			}
-
-			inline Transform Rx(const double & theta){
-				double theta_rad = toRad(theta);
-				double sinT = std::sin(theta_rad);
-				double cosT = std::cos(theta_rad);
-
-				Matrix4x4 m(1,   0,    0,0,
-							0,cosT,-sinT,0,
-							0,sinT, cosT,0,
-							0,   0,    0,1);
-
-				return Transform(m, m.T());
-			}
-
-			inline Transform Ry(const double & theta){
-				double theta_rad = toRad(theta);
-				double sinT = std::sin(theta_rad);
-				double cosT = std::cos(theta_rad);
-
-				Matrix4x4 m(cosT,0,sinT,0,
-							   0,1,   0,0,
-						   -sinT,0,cosT,0,
-							   0,0,   0,1);
-
-				return Transform(m, m.T());
-			}
-
-			inline Transform Rz(const double & theta){
-				double theta_rad = toRad(theta);
-				double sinT = std::sin(theta_rad);
-				double cosT = std::cos(theta_rad);
-
-				Matrix4x4 m(cosT,-sinT,0,0,
-							sinT, cosT,0,0,
-							   0,    0,0,0,
-							   0,    0,0,1);
-
-				return Transform(m, m.T());
-			}
-
-			inline Transform R(const double & theta, Vec3 & axis){
-				Vec3 a = axis.norm();
-				double theta_rad = toRad(theta);
-				double sinT = std::sin(theta_rad);
-				double cosT = std::cos(theta_rad);
-
-				Matrix4x4 m;
-
-				// 1st basis
-				m[0][0] = a.x() * a.x() + (1 - a.x() * a.x()) * cosT;
-				m[0][1] = a.x() * a.y() * (1 - cosT) - a.z() * sinT;
-				m[0][2] = a.x() * a.z() * (1 - cosT) + a.y() * sinT;
-				m[0][3] = 0;
-
-				// 2nd basis
-				m[1][0] = a.x() * a.y() * (1 - cosT) + a.z() * sinT;
-	            m[1][1] = a.y() * a.y() + (1 - a.y() * a.y()) * cosT;
-	            m[1][2] = a.y() * a.z() * (1 - cosT) - a.x() * sinT;
-				m[1][3] = 0;
-
-				// 3rd basis
-				m[2][0] = a.x() * a.y() * (1 - cosT) - a.y() * sinT;
-            	m[2][1] = a.y() * a.y() * (1 - cosT) + a.x() * sinT;
-            	m[2][2] = a.z() * a.y() + (1 - a.z() * a.z()) * cosT;
-				m[2][3] = 0;
-
-				return Transform(m, m.T());
 			}
 
 			/**
@@ -240,6 +172,75 @@ namespace target{
 
 	inline Transform S(const Vec3 & delta){
 		return S(delta.x(), delta.y(), delta.z());
+	}
+
+	inline Transform R(const double & theta, const Vec3 & axis){
+		Vec3 a = axis;
+		a = a.norm();
+		double theta_rad = toRad(theta);
+		double sinT = std::sin(theta_rad);
+		double cosT = std::cos(theta_rad);
+
+		Matrix4x4 m;
+
+		// 1st basis
+		m[0][0] = a.x() * a.x() + (1 - a.x() * a.x()) * cosT;
+		m[0][1] = a.x() * a.y() * (1 - cosT) - a.z() * sinT;
+		m[0][2] = a.x() * a.z() * (1 - cosT) + a.y() * sinT;
+		m[0][3] = 0;
+
+		// 2nd basis
+		m[1][0] = a.x() * a.y() * (1 - cosT) + a.z() * sinT;
+        m[1][1] = a.y() * a.y() + (1 - a.y() * a.y()) * cosT;
+        m[1][2] = a.y() * a.z() * (1 - cosT) - a.x() * sinT;
+		m[1][3] = 0;
+
+		// 3rd basis
+		m[2][0] = a.x() * a.y() * (1 - cosT) - a.y() * sinT;
+    	m[2][1] = a.y() * a.y() * (1 - cosT) + a.x() * sinT;
+    	m[2][2] = a.z() * a.y() + (1 - a.z() * a.z()) * cosT;
+		m[2][3] = 0;
+
+		return Transform(m, m.T());
+	}
+
+	inline Transform Rx(const double & theta){
+		double theta_rad = toRad(theta);
+		double sinT = std::sin(theta_rad);
+		double cosT = std::cos(theta_rad);
+
+		Matrix4x4 m(1,   0,    0,0,
+					0,cosT,-sinT,0,
+					0,sinT, cosT,0,
+					0,   0,    0,1);
+
+		return Transform(m, m.T());
+	}
+
+	inline Transform Ry(const double & theta){
+		double theta_rad = toRad(theta);
+		double sinT = std::sin(theta_rad);
+		double cosT = std::cos(theta_rad);
+
+		Matrix4x4 m(cosT,0,sinT,0,
+					   0,1,   0,0,
+				   -sinT,0,cosT,0,
+					   0,0,   0,1);
+
+		return Transform(m, m.T());
+	}
+
+	inline Transform Rz(const double & theta){
+		double theta_rad = toRad(theta);
+		double sinT = std::sin(theta_rad);
+		double cosT = std::cos(theta_rad);
+
+		Matrix4x4 m(cosT,-sinT,0,0,
+					sinT, cosT,0,0,
+					   0,    0,0,0,
+					   0,    0,0,1);
+
+		return Transform(m, m.T());
 	}
 
 }

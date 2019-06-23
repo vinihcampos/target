@@ -417,8 +417,9 @@ std::shared_ptr<target::Sphere> target::Descriptor::processSphere(XMLElement *& 
 		name = element->Attribute("name");
 
 	std::vector<std::shared_ptr<Transform>> transforms;
-	std::shared_ptr<Transform> translate = std::shared_ptr<Transform>( new Transform(T(0,0,0)) );
-	std::shared_ptr<Transform> scale = std::shared_ptr<Transform>( new Transform(S(1,1,1)) );
+	std::shared_ptr<Transform> translate = std::shared_ptr<Transform>( new Transform() );
+	std::shared_ptr<Transform> scale = std::shared_ptr<Transform>( new Transform() );
+	std::shared_ptr<Transform> rotate = std::shared_ptr<Transform>( new Transform() );
 
 	std::string elementName;
 	double radius = 1;
@@ -445,12 +446,34 @@ std::shared_ptr<target::Sphere> target::Descriptor::processSphere(XMLElement *& 
 			delta[1] = pChild->DoubleAttribute("y", 0.0);
 			delta[2] = pChild->DoubleAttribute("z", 0.0);
 			scale = std::shared_ptr<Transform>( new Transform(S(delta)) );
+		}else if(!elementName.compare("Rotate") || !elementName.compare("rotate")){
+			Vec3 axis;
+			double angle;
+			angle = pChild->DoubleAttribute("angle", 0.0);
+
+			axis[0] = pChild->DoubleAttribute("x", 0.0);
+			axis[1] = pChild->DoubleAttribute("y", 0.0);
+			axis[2] = pChild->DoubleAttribute("z", 0.0);
+
+			Transform rot;
+			if(axis[0] == 1){
+				rot = Rx(angle) * rot;
+			}
+			if(axis[1] == 1){
+				rot = Ry(angle) * rot;
+			}
+			if(axis[2] == 1){
+				rot = Rz(angle) * rot;
+			}
+
+			rotate = std::shared_ptr<Transform>( new Transform(rot) );
 		}else{
 			std::cerr << "The element " << elementName << " is invalid" << std::endl;
 		}
 	}
 
 	transforms.push_back(scale);
+	transforms.push_back(rotate);
 	transforms.push_back(translate);
 
 	std::shared_ptr<Transform> transform = Compose(transforms);
@@ -474,8 +497,9 @@ std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processTria
 	bool bfc = true;
 
 	std::vector<std::shared_ptr<Transform>> transforms;
-	std::shared_ptr<Transform> translate = std::shared_ptr<Transform>( new Transform(T(0,0,0)) );
-	std::shared_ptr<Transform> scale = std::shared_ptr<Transform>( new Transform(S(1,1,1)) );
+	std::shared_ptr<Transform> translate = std::shared_ptr<Transform>( new Transform() );
+	std::shared_ptr<Transform> scale = std::shared_ptr<Transform>( new Transform() );
+	std::shared_ptr<Transform> rotate = std::shared_ptr<Transform>( new Transform() );
 
 	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
 		elementName = pChild->Name();
@@ -495,10 +519,32 @@ std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processTria
 			delta[1] = pChild->DoubleAttribute("y", 0.0);
 			delta[2] = pChild->DoubleAttribute("z", 0.0);
 			scale = std::shared_ptr<Transform>( new Transform(S(delta)) );
+		}else if(!elementName.compare("Rotate") || !elementName.compare("rotate")){
+			Vec3 axis;
+			double angle;
+			angle = pChild->DoubleAttribute("angle", 0.0);
+
+			axis[0] = pChild->DoubleAttribute("x", 0.0);
+			axis[1] = pChild->DoubleAttribute("y", 0.0);
+			axis[2] = pChild->DoubleAttribute("z", 0.0);
+
+			Transform rot;
+			if(axis[0] == 1){
+				rot = Rx(angle) * rot;
+			}
+			if(axis[1] == 1){
+				rot = Ry(angle) * rot;
+			}
+			if(axis[2] == 1){
+				rot = Rz(angle) * rot;
+			}
+
+			rotate = std::shared_ptr<Transform>( new Transform(rot) );
 		}
 	}
 
 	transforms.push_back(scale);
+	transforms.push_back(rotate);
 	transforms.push_back(translate);
 
 	std::shared_ptr<Transform> transform = Compose(transforms);
@@ -548,6 +594,8 @@ std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processTria
 		}else if(!elementName.compare("Translate") || !elementName.compare("translate")){
 			continue;
 		}else if(!elementName.compare("Scale") || !elementName.compare("scale")){
+			continue;
+		}else if(!elementName.compare("Rotate") || !elementName.compare("rotate")){
 			continue;
 		}else{
 			std::cerr << "The element " << elementName << " is invalid" << std::endl;

@@ -101,7 +101,7 @@ namespace target{
 			inline float getRadius() { return radius; }
 
 			Bounds3 get_bounding_box() const {
-				return transform->inv().bounds(this->box); 
+				return transform->bounds(this->box); 
 			}
 	};
 

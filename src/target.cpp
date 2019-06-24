@@ -6,6 +6,9 @@
 #include <string>
 #include <memory>
 
+#include "Matrix4x4.h"
+#include "Transform.h"
+
 using namespace std;
 using namespace target;
 

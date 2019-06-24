@@ -14,12 +14,15 @@ namespace target{
 			float radius;
 
 		public:
-			Sphere(const Vec3 & center, const float & radius, const std::string & name ) 
-				: Shape(name), center{center}, radius{radius}{
+			Sphere(const Vec3 & center, const float & radius, const std::string & name, const std::shared_ptr<Transform> & transform) 
+				: Shape(name, transform), center{center}, radius{radius}{
 					this->box = Bounds3( this->center - radius, this->center + radius );
 				}
-			inline bool intersect( Ray & r, SurfaceInteraction * surface = nullptr) const { 
+			
+			inline bool intersect( Ray & wr, SurfaceInteraction * surface = nullptr) const { 
 				
+				Ray r = transform->inv().ray(wr);
+
 				Vec3 origin = Vec3(r.getOrigin());
 				Vec3 OC = origin - center;
 
@@ -41,21 +44,26 @@ namespace target{
 
 				if(surface != nullptr){
 					surface->time = min_root;
-					surface->p = r(min_root);
-					surface->p_max = r(max_root);
-					surface->n = (Vec3(surface->p) - center) * 2.0;
-					surface->wo = (origin - r.getDirection());
-					surface->material = this->material;				
+					surface->p = transform->point(r(min_root));
+					surface->p_max = transform->point(r(max_root));
+					surface->n = transform->normal((Vec3(r(min_root)) - center) * 2.0);
+					surface->wo = transform->vec(origin - r.getDirection());
+					surface->material = this->material;			
 				}
+
+				wr.tMax = r.tMax;
 
 				return true; 
 			}
-			inline bool intersect_p( const Ray& r ) const{
+
+			inline bool intersect_p( const Ray& wr ) const{
 				
 				// (P-C).(P-C) = r²
 				// ((O+tD-C).(O+tD-C) = r²
 				// ((tD+(O-C)).(tD+(O-C)) = r²
 				// t²(D.D) + 2t(D.(O-C)) + ((O-C).(O-C)) = r²			
+
+				Ray r = transform->inv().ray(wr);
 
 				Vec3 origin = Vec3(r.getOrigin());
 				Vec3 OC = origin - center;
@@ -68,7 +76,8 @@ namespace target{
 				return (delta > 0);
 
 			}
-			inline bool intersect_p( const Ray& r, double tmin, double tmax ) const{
+			inline bool intersect_p( const Ray& wr, double tmin, double tmax ) const{
+				Ray r = transform->inv().ray(wr);
 				Vec3 origin = Vec3(r.getOrigin());
 				Vec3 OC = origin - center;
 
@@ -90,6 +99,10 @@ namespace target{
 			//inline Material * get_material(void) const { return this->material.get(); }
 			inline Vec3 getCenter(){ return center; }
 			inline float getRadius() { return radius; }
+
+			Bounds3 get_bounding_box() const {
+				return transform->bounds(this->box); 
+			}
 	};
 
 }

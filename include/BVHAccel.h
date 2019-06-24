@@ -133,7 +133,7 @@ namespace target{
 				Ray ray = r;
 				return intersect(ray, nullptr);
 			}
-			bool intersect_p( const Ray& r, double tmin, double tmax ) const{ // TODO
+			bool intersect_p( const Ray& r, double tmin, double tmax ) const{
 				Ray ray = r;
 				Vec3 invDir = 1.0 / ray.getDirection();
 				int dirIsNeg[3] = { invDir.x() < 0, invDir.y() < 0, invDir.z() < 0 };
@@ -170,6 +170,9 @@ namespace target{
 				}
 				return false;
 			}
+			
+			Bounds3 get_bounding_box() const { return nodes[0].bounds; };
+
 
 		private: // Private methods
 			inline BVHBuildNode * recursiveBuild(

@@ -26,7 +26,7 @@
                 <indices value="0 1 2 0 2 3"/>
                 <vertices value="-3 -0.5 -3  3 -0.5 -3  3 -0.5 3  -3 -0.5 3"/>
                 <normals value="0 1 0  0 1 0  0 1 0  0 1 0"/>
-                <clockwise value="false"/>
+                <clockwise value="true"/>
                 <backfacecull value="true"/>
             </object>
 
@@ -44,8 +44,10 @@
             </object>
 
             <object type="sphere" name="sphere2" material="redish">
-                <radius value="0.5"/>
-                <center x="-1.86" y="0" z="-1.0"/>
+                <radius value="1"/>
+                <center x="0" y="0" z="0"/>
+                <scale x=".5" y=".5" z=".5"/>
+                <translate x="-1.86" y="0" z="-1"/>
             </object>
 
             <object type="sphere" name="sphere3" material="blueish">

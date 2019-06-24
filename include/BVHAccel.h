@@ -171,7 +171,7 @@ namespace target{
 				return false;
 			}
 			
-			Bounds3 get_bounding_box() const { return box; };
+			Bounds3 get_bounding_box() const { return nodes[0].bounds; };
 
 
 		private: // Private methods

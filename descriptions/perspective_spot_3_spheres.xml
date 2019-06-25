@@ -23,15 +23,17 @@
         <object type="sphere" name="sphere1" material="greenish" >
             <radius value="0.5"/>
             <center x="0" y="0" z="-2"/>
+            <object type="sphere" name="sphere2" material="redish">
+                <radius value="0.5"/>
+                <center x="-4" y="0" z="-2"/>
+                <object type="sphere" name="sphere3" material="blueish">
+                    <radius value="0.5"/>
+                    <center x="4" y="0" z="-2"/>
+                </object>                
+            </object>
         </object>
-        <object type="sphere" name="sphere2" material="redish">
-            <radius value="0.5"/>
-            <center x="-4" y="0" z="-2"/>
-        </object>
-        <object type="sphere" name="sphere3" material="blueish">
-            <radius value="0.5"/>
-            <center x="4" y="0" z="-2"/>
-        </object>
+        
+        
         <object type="sphere" name="sphere4" material="grey">
             <radius value="5000"/>
             <center x="0" y="-5000.5" z="-1"/>

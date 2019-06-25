@@ -219,21 +219,22 @@ void target::Descriptor::processBackground(std::shared_ptr<Buffer> & buffer, XML
 
 void target::Descriptor::processScene(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, std::vector<std::shared_ptr<Light>> & lights, XMLElement *& element){
 	std::string elementName;
+	std::shared_ptr<Transform> transform = std::shared_ptr<Transform>(new Transform());
 	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
 		elementName = pChild->Name();
 		if(!elementName.compare("Object") || !elementName.compare("object")){
-			processObject(primitives, materials, pChild);
+			processObject(primitives, materials, pChild, transform);
 		}else if(!elementName.compare("Light") || !elementName.compare("light")){
 			processLight(lights, pChild);
 		}else if(!elementName.compare("Aggregate") || !elementName.compare("aggregate")){
-			processAggregate(primitives, materials, pChild);
+			processAggregate(primitives, materials, pChild, transform);
 		}else{
 			std::cerr << "The element " << elementName << " is invalid" << std::endl;
 		}
 	}
 }
 
-void target::Descriptor::processObject(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, XMLElement *& element){
+void target::Descriptor::processObject(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, XMLElement *& element, const std::shared_ptr<Transform> & transform){
 	std::string type = "";
 	std::string material_name = "";
 
@@ -244,32 +245,15 @@ void target::Descriptor::processObject(std::vector<std::shared_ptr<Primitive>> &
 		material_name = element->Attribute("material");
 
 	if(!type.compare("Sphere") || !type.compare("sphere")){
-		primitives.push_back(processSphere(element));
-
-		if(material_name.compare("")){
-			primitives.back().get()->set_material(materials[material_name]);
-		}else{
-			std::shared_ptr<Material> m = std::shared_ptr<Material>(new Material(GREEN));
-			primitives.back().get()->set_material(m);
-		}
+		processSphere(primitives, materials, material_name, element, transform);
 	}else if(!type.compare("Mesh") || !type.compare("mesh")){
-		std::vector< std::shared_ptr<Triangle> > triangles = processTriangle(element);
-		for(std::shared_ptr<Triangle> t : triangles){
-			primitives.push_back(t);
-
-			if(material_name.compare("")){
-				primitives.back().get()->set_material(materials[material_name]);
-			}else{
-				std::shared_ptr<Material> m = std::shared_ptr<Material>(new Material(GREEN));
-				primitives.back().get()->set_material(m);
-			}
-		}
+		processTriangle(primitives, materials, material_name, element, transform);
 	}else{
 		std::cerr << "The object type is invalid" << std::endl;
 	}
 }
 
-void target::Descriptor::processAggregate(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, XMLElement *& element){
+void target::Descriptor::processAggregate(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, XMLElement *& element, const std::shared_ptr<Transform> & transform){
 	std::string split_method_str = "";
 	int max_prims_node;
 	SplitMethod split_method;
@@ -291,7 +275,7 @@ void target::Descriptor::processAggregate(std::vector<std::shared_ptr<Primitive>
 	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
 		elementName = pChild->Name();
 		if(!elementName.compare("Object") || !elementName.compare("object")){
-			processObject(primitives_bvh, materials, pChild);
+			processObject(primitives_bvh, materials, pChild, transform);
 		}else{
 			std::cerr << "The element " << elementName << " is invalid" << std::endl;
 		}
@@ -411,7 +395,7 @@ void target::Descriptor::processLight(std::vector<std::shared_ptr<Light>> & ligh
 	}
 }
 
-std::shared_ptr<target::Sphere> target::Descriptor::processSphere(XMLElement *& element){
+void target::Descriptor::processSphere(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, const std::string & material_name, XMLElement *& element, const std::shared_ptr<Transform> & t){
 	std::string name = "";
 	if(element->Attribute("name") != NULL) 
 		name = element->Attribute("name");
@@ -467,6 +451,8 @@ std::shared_ptr<target::Sphere> target::Descriptor::processSphere(XMLElement *& 
 			}
 
 			rotate = std::shared_ptr<Transform>( new Transform(rot) );
+		}else if(!elementName.compare("Object") || !elementName.compare("object")){
+			continue;
 		}else{
 			std::cerr << "The element " << elementName << " is invalid" << std::endl;
 		}
@@ -475,12 +461,27 @@ std::shared_ptr<target::Sphere> target::Descriptor::processSphere(XMLElement *& 
 	transforms.push_back(scale);
 	transforms.push_back(rotate);
 	transforms.push_back(translate);
+	transforms.push_back(t);
 
 	std::shared_ptr<Transform> transform = Compose(transforms);
-	return std::shared_ptr<Sphere>(new Sphere(Vec3(x,y,z), radius, name, transform));
+
+	primitives.push_back( std::shared_ptr<Sphere>(new Sphere(Vec3(x,y,z), radius, name, transform)) );
+	if(material_name.compare("")){
+		primitives.back().get()->set_material(materials[material_name]);
+	}else{
+		std::shared_ptr<Material> m = std::shared_ptr<Material>(new Material(GREEN));
+		primitives.back().get()->set_material(m);
+	}
+
+	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
+		elementName = pChild->Name();
+		if(!elementName.compare("Object") || !elementName.compare("object")){
+			processObject(primitives, materials, pChild, transform);
+		}
+	}
 }
 
-std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processTriangle(XMLElement *& element){
+void target::Descriptor::processTriangle(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, const std::string & material_name, XMLElement *& element, const std::shared_ptr<Transform> & t){
 	std::string name = "";
 	if(element->Attribute("name") != NULL) 
 		name = element->Attribute("name");
@@ -546,6 +547,7 @@ std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processTria
 	transforms.push_back(scale);
 	transforms.push_back(rotate);
 	transforms.push_back(translate);
+	transforms.push_back(t);
 
 	std::shared_ptr<Transform> transform = Compose(transforms);
 
@@ -553,7 +555,17 @@ std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processTria
 		elementName = pChild->Name();
 		if(!elementName.compare("Filename") || !elementName.compare("filename")){
 			std::string filename_obj = pChild->Attribute("value");
-			return processMeshObject(filename_obj, name, transform, clk, bfc);
+			std::vector<std::shared_ptr<Triangle>> triangles =  processMeshObject(filename_obj, name, transform, clk, bfc);
+			for(std::shared_ptr<Triangle> tri : triangles){
+				primitives.push_back(tri);
+
+				if(material_name.compare("")){
+					primitives.back().get()->set_material(materials[material_name]);
+				}else{
+					std::shared_ptr<Material> m = std::shared_ptr<Material>(new Material(GREEN));
+					primitives.back().get()->set_material(m);
+				}
+			}
 		}
 	}
 
@@ -597,6 +609,10 @@ std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processTria
 			continue;
 		}else if(!elementName.compare("Rotate") || !elementName.compare("rotate")){
 			continue;
+		}else if(!elementName.compare("Object") || !elementName.compare("object")){
+			continue;
+		}else if(!elementName.compare("Filename") || !elementName.compare("filename")){
+			continue;
 		}else{
 			std::cerr << "The element " << elementName << " is invalid" << std::endl;
 		}
@@ -610,7 +626,23 @@ std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processTria
 		triangles.push_back( std::shared_ptr<Triangle>(new Triangle(name, mesh, i, transform, clk, bfc)) );
 	}
 
-	return triangles;
+	for(std::shared_ptr<Triangle> tri : triangles){
+		primitives.push_back(tri);
+
+		if(material_name.compare("")){
+			primitives.back().get()->set_material(materials[material_name]);
+		}else{
+			std::shared_ptr<Material> m = std::shared_ptr<Material>(new Material(GREEN));
+			primitives.back().get()->set_material(m);
+		}
+	}
+
+	for(XMLElement * pChild = element->FirstChildElement(); pChild != NULL; pChild = pChild->NextSiblingElement()){
+		elementName = pChild->Name();
+		if(!elementName.compare("Object") || !elementName.compare("object")){
+			processObject(primitives, materials, pChild, transform);
+		}
+	}
 }
 
 std::vector< std::shared_ptr<target::Triangle> > target::Descriptor::processMeshObject(const std::string & filename, const std::string & name,  const std::shared_ptr<Transform> & transform, const bool & clk, const bool & bfc){

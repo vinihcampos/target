@@ -28,15 +28,16 @@ namespace target{
 			static void processBackground(std::shared_ptr<Buffer> & buffer, XMLElement *& element);
 			static void processCamera(std::shared_ptr<Buffer> & buffer, std::shared_ptr<Camera> & camera, XMLElement *& element);
 			static void processScene(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, std::vector<std::shared_ptr<Light>> & lights, XMLElement *& element);
-			static void processObject(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, XMLElement *& element);
 			static void processLight(std::vector<std::shared_ptr<Light>> & lights, XMLElement *& element);
-			static void processAggregate(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, XMLElement *& element);
 			static void processMaterials(std::map<std::string, std::shared_ptr<Material>> & materials, XMLElement *& element);
 			static Color processFlatMaterial(XMLElement *& element);
 			static std::shared_ptr<target::Material> processBlinnMaterial(XMLElement *& element);
 			static void processSetup(std::shared_ptr<SampleIntegrator> & integrator, XMLElement *& element);
-			static std::shared_ptr<target::Sphere> processSphere(XMLElement *& element);
-			static std::vector< std::shared_ptr<target::Triangle> > processTriangle(XMLElement *& element);
+			
+			static void processObject(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, XMLElement *& element, const std::shared_ptr<Transform> & transform);
+			static void processAggregate(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, XMLElement *& element, const std::shared_ptr<Transform> & transform);
+			static void processSphere(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, const std::string & material_name, XMLElement *& element, const std::shared_ptr<Transform> & t);
+			static void processTriangle(std::vector<std::shared_ptr<Primitive>> & primitives, std::map<std::string, std::shared_ptr<Material>> & materials, const std::string & material_name, XMLElement *& element, const std::shared_ptr<Transform> & t);
 			static std::vector< std::shared_ptr<target::Triangle> > processMeshObject(const std::string & filename, const std::string & name,  const std::shared_ptr<Transform> & transform, const bool & clk = true, const bool & bfc = true);
 
 		public:

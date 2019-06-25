@@ -21,19 +21,19 @@
     <scene>
         <!-- Geometries -->
         <aggregate split_method="middle" max_prims_node="4" >
+            <object type="mesh" name="mesh2" material="red_3" >
+                <ntriangles value="2" />
+                <indices value="0 1 2 0 2 3"/>
+                <vertices value="-30 30.5 -1  30 30.5 -1  30 -30.5 -1  -30 -30.5 -1"/>
+                <normals value="0 0 1  0 0 1  0 0 1  0 0 1 "/>
+                <backfacecull value="true"/>
+            </object>
             <object type="mesh" name="mesh1" material="grey" >             
                 <filename value="objects/teapot.obj" />
                 <clockwise value="false"/>
                 <translate x="-20" y="0" z="10"/>
                 <rotate angle="45" x="0" y="1" z="0"/>
                 <backfacecull value="false"/>
-                <object type="mesh" name="mesh2" material="red_3" >
-                    <ntriangles value="2" />
-                    <indices value="0 1 2 0 2 3"/>
-                    <vertices value="-30 30.5 -1  30 30.5 -1  30 -30.5 -1  -30 -30.5 -1"/>
-                    <normals value="0 0 1  0 0 1  0 0 1  0 0 1 "/>
-                    <backfacecull value="true"/>
-                </object>
             </object>
             <object type="sphere" name="sphere1" material="cyan" >
                 <radius value="1"/>

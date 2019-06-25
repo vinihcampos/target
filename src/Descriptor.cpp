@@ -423,13 +423,13 @@ void target::Descriptor::processSphere(std::vector<std::shared_ptr<Primitive>> &
 			delta[0] = pChild->DoubleAttribute("x", 0.0);
 			delta[1] = pChild->DoubleAttribute("y", 0.0);
 			delta[2] = pChild->DoubleAttribute("z", 0.0);
-			translate = std::shared_ptr<Transform>( new Transform(T(delta)) );
+			translate = translate * std::shared_ptr<Transform>( new Transform(T(delta)) );
 		}else if(!elementName.compare("Scale") || !elementName.compare("scale")){
 			Vec3 delta;
 			delta[0] = pChild->DoubleAttribute("x", 0.0);
 			delta[1] = pChild->DoubleAttribute("y", 0.0);
 			delta[2] = pChild->DoubleAttribute("z", 0.0);
-			scale = std::shared_ptr<Transform>( new Transform(S(delta)) );
+			scale = scale * std::shared_ptr<Transform>( new Transform(S(delta)) );
 		}else if(!elementName.compare("Rotate") || !elementName.compare("rotate")){
 			Vec3 axis;
 			double angle;
@@ -450,7 +450,7 @@ void target::Descriptor::processSphere(std::vector<std::shared_ptr<Primitive>> &
 				rot = Rz(angle) * rot;
 			}
 
-			rotate = std::shared_ptr<Transform>( new Transform(rot) );
+			rotate = rotate * std::shared_ptr<Transform>( new Transform(rot) );
 		}else if(!elementName.compare("Object") || !elementName.compare("object")){
 			continue;
 		}else{
@@ -513,13 +513,13 @@ void target::Descriptor::processTriangle(std::vector<std::shared_ptr<Primitive>>
 			delta[0] = pChild->DoubleAttribute("x", 0.0);
 			delta[1] = pChild->DoubleAttribute("y", 0.0);
 			delta[2] = pChild->DoubleAttribute("z", 0.0);
-			translate = std::shared_ptr<Transform>( new Transform(T(delta)) );
+			translate = translate * std::shared_ptr<Transform>( new Transform(T(delta)) );
 		}else if(!elementName.compare("Scale") || !elementName.compare("scale")){
 			Vec3 delta;
 			delta[0] = pChild->DoubleAttribute("x", 0.0);
 			delta[1] = pChild->DoubleAttribute("y", 0.0);
 			delta[2] = pChild->DoubleAttribute("z", 0.0);
-			scale = std::shared_ptr<Transform>( new Transform(S(delta)) );
+			scale = scale * std::shared_ptr<Transform>( new Transform(S(delta)) );
 		}else if(!elementName.compare("Rotate") || !elementName.compare("rotate")){
 			Vec3 axis;
 			double angle;
@@ -540,7 +540,7 @@ void target::Descriptor::processTriangle(std::vector<std::shared_ptr<Primitive>>
 				rot = Rz(angle) * rot;
 			}
 
-			rotate = std::shared_ptr<Transform>( new Transform(rot) );
+			rotate = rotate * std::shared_ptr<Transform>( new Transform(rot) );
 		}
 	}
 

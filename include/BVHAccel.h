@@ -8,8 +8,17 @@
 
 namespace target{
 
+	/**
+	* Enum class to choose split method.
+	* 
+	* @author Vinícius Campos
+	* @date 06/25/2019
+	*/
 	enum class SplitMethod { Middle, EqualCounts };
 
+	/**
+	* Provides information about bouding primitive.
+	*/
 	struct BVHPrimitiveInfo {
 		BVHPrimitiveInfo(size_t primitiveNumber, Bounds3 bounds)
 			: primitiveNumber(primitiveNumber), bounds(bounds),
@@ -21,6 +30,9 @@ namespace target{
 		Vec3 centroid;
 	};
 
+	/**
+	* Provides information about bouding node.
+	*/
 	struct BVHBuildNode {
 		Bounds3 bounds;
 		BVHBuildNode * children[2];
@@ -42,6 +54,10 @@ namespace target{
 		}
 	};
 
+	/**
+	* Provides information about linear bouding node.
+	*/
+	
 	struct LinearBVHNode {
 		Bounds3 bounds;
 		union {
@@ -53,6 +69,10 @@ namespace target{
 		uint8_t pad[1]; // ensure 32 byte total size
 	};
 
+
+	/**
+	* Provides methods to accelarate the raytracer through Bounding Volume Hierarchy structure.
+	*/
 	class BVHAccel : public Primitive{
 		private: // Private attributes
 			int maxPrimsInNode;
@@ -63,6 +83,13 @@ namespace target{
 		
 		public:
 			std::vector<std::shared_ptr<Primitive>> primitives;
+
+			/**
+			*	Creates the accelerator.
+			*	@param primitives list of primitives.
+			*	@param maxPrimsInNode max number of primitives in node.
+			*	@param splitMethod split method.
+			*/
 			BVHAccel(const std::vector<std::shared_ptr<Primitive>> & primitives, int maxPrimsInNode, 
 				SplitMethod splitMethod ) : 
 				maxPrimsInNode(std::min(255, maxPrimsInNode)), 
@@ -70,6 +97,9 @@ namespace target{
 					if(primitives.empty()) return;
 			}
 
+			/**
+			*	Built the three structure.
+			*/
 			inline void BVHBuild(){
 				std::vector< BVHPrimitiveInfo > primitiveInfo( primitives.size() );
 				for (size_t i = 0; i < primitives.size(); ++i)
@@ -90,7 +120,7 @@ namespace target{
 
 				//print_flatten_tree(nodes, totalNodes);
 			}
-
+			
 			bool intersect( Ray& r, SurfaceInteraction * isect) const{
 				bool hit = false;
 				Vec3 invDir = 1.0 / r.getDirection();

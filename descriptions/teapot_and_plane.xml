@@ -21,7 +21,7 @@
     <scene>
         <!-- Geometries -->
         <object type="mesh" name="mesh1" material="grey" >             
-            <filename value="objects/teapot.obj" />
+            <filename value="objects/teapot-low.obj" />
             <clockwise value="false"/>
             <backfacecull value="false"/> 
         </object>      

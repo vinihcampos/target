@@ -27,27 +27,27 @@
         <light type="ambient" name="ambient_light">             
             <intensity r="0.1" g="0.1" b="0.1"/>         
         </light>         
-        <light type="directional" name="directional_light">             
+        <!--<light type="directional" name="directional_light">             
             <intensity r="0.5" g="0.6" b="0.5"/>             
             <direction x="-5" y="-5" z="10"/>         
         </light>         
         <light type="directional" name="directional_light">             
             <intensity r="0.5" g="0.5" b="0.5"/>             
             <direction x="5" y="-5" z="10"/>         
-        </light>
-
-        <!--<light type="point" name="point_light">             
-            <intensity r="0.9" g="0.9" b="0.9"/>             
-            <position x="15" y="-10" z="30"/>
         </light>-->
 
-        <!--<light type="spot" name="spot_light">             
+        <light type="point" name="point_light">             
+            <intensity r="0.9" g="0.9" b="0.9"/>             
+            <position x="-300" y="100" z="-3000"/>
+        </light>
+
+        <light type="spot" name="spot_light">             
             <intensity r="0.9" g="0.3" b="0.1"/>             
-            <position x="0" y="50" z="30"/>
+            <position x="-300" y="100" z="-3000"/>
             <point_at x="0" y="0" z="0"/>
             <cutoff value="50"/>
             <falloff value="20"/>
-        </light>-->
+        </light>
 
     </scene>
     <materials>
